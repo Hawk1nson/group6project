@@ -1,4 +1,6 @@
 <?php
+// ensure BASE_URL and config are loaded before using redirect()
+require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/../lib/auth.php';
 require_once __DIR__ . '/../lib/helpers.php';
 

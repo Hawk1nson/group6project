@@ -39,6 +39,9 @@ body {
 
 .sidebar {
     width: 240px;
+    min-width: 240px;
+    flex: 0 0 240px;
+    /* prevent shrinking so sidebar stays same width on all pages */
     background: var(--sidebar);
     color: var(--sidebar-text);
     display: flex;
@@ -99,6 +102,52 @@ body {
 
 .header .right a:hover {
     color: var(--accent-hover)
+}
+
+/* Table header sort indicators and hover/active styling */
+thead th[data-sort] {
+    position: relative;
+    cursor: pointer;
+    transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+    /* leave space on the right for the sort glyph */
+    padding-right: 30px;
+}
+
+/* faint hint arrow always visible on hover, stronger when active */
+thead th[data-sort]::after {
+    /* subtle double-arrow hint when not sorted; replaced by ▲/▼ when active */
+    content: "⇅";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    line-height: 1;
+    color: var(--muted);
+    opacity: 0.28;
+    transition: opacity 120ms ease, color 160ms ease, transform 120ms ease;
+    pointer-events: none; /* don't interfere with click target */
+}
+
+/* active sorted column visuals */
+thead th[data-sorted] {
+    background: rgba(37,99,235,0.06); /* subtle tint using accent */
+    color: var(--accent);
+    box-shadow: inset 0 -2px 0 rgba(37,99,235,0.06);
+}
+
+thead th[data-sorted][data-dir="asc"]::after { content: "▲"; opacity: 1; color: var(--accent); }
+thead th[data-sorted][data-dir="desc"]::after { content: "▼"; opacity: 1; color: var(--accent); }
+
+thead th[data-sort]:hover, thead th[data-sort]:focus {
+    background: var(--table-stripe);
+    color: var(--accent-hover);
+}
+
+/* keyboard focus visible */
+thead th[data-sort]:focus {
+    outline: 3px solid rgba(37,99,235,0.12);
+    outline-offset: 2px;
 }
 
 
@@ -202,6 +251,13 @@ button:hover,
     background: #f8fafc
 }
 
+/* Small button variant */
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
 
 /* Login */
 .center {
@@ -251,6 +307,7 @@ button:hover,
 
 .two-col {
     display: grid;
+    /* increase left column to give forms and notes more horizontal space */
     grid-template-columns: 1.2fr 1fr;
     gap: 12px
 }
@@ -330,4 +387,226 @@ button:hover,
         text-align: center;
         margin: 0 4px
     }
+}
+
+/* Page-specific filter grid rules moved from inline <style> blocks */
+.page-vehicles .filters .row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.page-vehicles .filters .row>div {
+    min-width: 140px
+}
+
+.page-reservations .filters .row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(150px, 1fr));
+    gap: 8px;
+}
+
+.page-reservations .filters .row>div {
+    min-width: 150px
+}
+
+.page-customers .filters .row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.page-customers .filters .row>div {
+    min-width: 200px
+}
+
+.page-sales .filters .row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(150px, 1fr));
+    gap: 8px;
+}
+
+.page-sales .filters .row>div {
+    min-width: 150px
+}
+
+.page-employees .filters .row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(160px, 1fr));
+    gap: 8px;
+}
+
+.page-employees .filters .row>div {
+    min-width: 160px
+}
+
+/* Small utilities moved from inline styles */
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.badge.on {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge.off {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Common utilities to replace inline style attributes */
+.scrollable {
+    overflow: auto
+}
+
+.flex-row-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px
+}
+
+.mt-10 {
+    margin-top: 10px
+}
+
+.mt-12 {
+    margin-top: 12px
+}
+
+.mb-12 {
+    margin-bottom: 12px
+}
+
+.mb-8 {
+    margin-bottom: 8px
+}
+
+.h2-tight {
+    margin: 0 0 8px
+}
+
+.hidden {
+    display: none
+}
+
+/* thumbnail images used in vehicle lists */
+.thumb-img {
+    width: 64px;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    object-fit: cover
+}
+
+/* extra-large thumbnail for edit pages (approx 400% of default 64px => 256px) */
+.thumb-img-xl {
+    width: 256px;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+}
+
+/* alert utilities used in login/register pages */
+.alert {
+    padding: 8px 10px;
+    border-radius: 8px
+}
+
+.alert-success {
+    border: 1px solid #a7f3d0;
+    background: #ecfdf5;
+    color: #065f46
+}
+
+.alert-error {
+    color: #b91c1c
+}
+
+/* Font-weight utilities */
+.fw-700 {
+    font-weight: 700
+}
+
+.fw-600 {
+    font-weight: 600
+}
+
+/* New-sale page styles */
+.specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+}
+
+.asking-price {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.asking-price-highlight {
+    background: var(--accent);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.vehicle-image-lrg {
+    max-width: 160px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: block;
+    margin-bottom: 8px
+}
+
+.price-row {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+.price-row input[type="number"] {
+    max-width: 180px
+}
+
+.asking-price-inline {
+    font-weight: 800
+}
+
+/* Larger textarea used for notes in new_sale form */
+.large-textarea {
+    min-height: 180px;
+    /* larger by default to fit page aesthetic */
+    padding: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+    border-radius: 10px;
+    resize: vertical;
 }

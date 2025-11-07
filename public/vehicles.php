@@ -1,10 +1,13 @@
 <?php
 // this page will be the page that DEALERSHIP accounts see when they log in
 
-require_once __DIR__ . '/../../../lib/auth.php';
-require_once __DIR__ . '/../../../lib/helpers.php';
-require_once __DIR__ . '/../../../lib/db.php';
-if (!auth_check()) redirect('../../login.php');
+require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/helpers.php';
+require_once __DIR__ . '/../lib/db.php';
+
+require_once __DIR__ . '/bootstrap.php';
+
+if (!auth_check()) redirect('/../login.php');
 
 $pdo = DB::conn();
 
@@ -16,6 +19,12 @@ $rows = $pdo->query("
 ")->fetchAll();
 
 $q = $_GET['q'] ?? '';
+$status = $_GET['status'] ?? '';
+$year_min = $_GET['year_min'] ?? '';
+$year_max = $_GET['year_max'] ?? '';
+$price_min = $_GET['price_min'] ?? '';
+$price_max = $_GET['price_max'] ?? '';
+$per_page = (int)($_GET['per_page'] ?? 10);
 $params = [];
 
 $sql = "SELECT vehicle_id, vin, make, model, model_year, color, price, status, image_filename, image_url
@@ -39,45 +48,8 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// remove after testing - not needed anymore
-// initialize filter values
-// $q = $_GET['q'] ?? '';
-// $status = $_GET['status'] ?? '';
-// $year_min = $_GET['year_min'] ?? '';
-// $year_max = $_GET['year_max'] ?? '';
-// $price_min = $_GET['price_min'] ?? '';
-// $price_max = $_GET['price_max'] ?? '';
 ?>
-
-<?php
-
-function vehicle_img_src($val): string
-{
-    $val = trim((string)$val);
-    if ($val === '') return '';
-
-    if (preg_match('~^(https?:)?//~i', $val)) {
-        return preg_replace('/\s+/', '%20', $val);
-    }
-
-    if ($val[0] === '/') {
-        $path = ltrim($val, '/');
-        $segments = array_map('rawurlencode', explode('/', $path));
-        return '/' . implode('/', $segments);
-    }
-
-    $path = ltrim($val, '/');
-
-    if (str_starts_with($path, 'cdms/')) {
-    } elseif (str_starts_with($path, 'images/')) {
-        $path = 'cdms/' . $path;
-    } else {
-        $path = 'cdms/images/vehicles/' . $path;
-    }
-
-    $segments = array_map('rawurlencode', explode('/', $path));
-    return '/' . implode('/', $segments);
-}
+<?php // vehicle_img_src() is now provided by lib/helpers.php to avoid duplication
 ?>
 
 <!doctype html>
@@ -87,28 +59,26 @@ function vehicle_img_src($val): string
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CDMS — Vehicles</title>
-    <link rel="stylesheet" href="../../assets/style.css">
-    <style>
-        .filters .row {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(140px, 1fr));
-            gap: 8px;
-        }
-
-        .filters .row>div {
-            min-width: 140px
-        }
-    </style>
+    <?php include __DIR__ . '/../includes/header.php'; ?>
 </head>
 
-<body>
+<body class="page-vehicles">
     <div class="layout">
-        <?php include __DIR__ . '/../_sidebar.php'; ?>
+        <?php include __DIR__ . '/_sidebar.php'; ?>
         <div class="content">
             <div class="header">
                 <div class="title">Vehicles</div>
-                <div class="right"><a href="../dashboard.php">Dashboard</a> • <a href="../../logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
+
+            <!-- Add Vehicle button placed directly under the title -->
+            <div class="mt-10">
+                <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/vehicle_add.php">Add Vehicle</a><br>
+            </div>
+
+            <?php if (!empty($_GET['msg'])): ?>
+                <div class="card mb-12 alert-success"><?= e($_GET['msg']) ?></div>
+            <?php endif; ?>
 
             <!-- FILTERS (IDs are for the JS enhancer) -->
             <div class="card filters">
@@ -144,7 +114,7 @@ function vehicle_img_src($val): string
                             <input id="price_max" type="number" step="0.01" value="<?= e($price_max) ?>">
                         </div>
                     </div>
-                    <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="flex-row-wrap mt-10">
                         <label>Per page
                             <select id="per_page">
                                 <?php foreach ([10, 20, 30, 50] as $pp): ?>
@@ -153,33 +123,32 @@ function vehicle_img_src($val): string
                             </select>
                         </label>
                         <button class="btn" type="button" onclick="window.SimpleTable && SimpleTable.update && SimpleTable.update()">Apply</button>
-                        <a class="btn secondary" href="index.php">Reset</a>
+                        <a class="btn secondary" href="#" id="resetBtn">Reset</a>
                     </div>
                 </form>
             </div>
 
             <!-- TABLE -->
-            <div class="card" style="overflow:auto">
+            <div class="card scrollable">
                 <table id="vehiclesTable" class="table">
                     <thead>
-                        <tr>
-                            <th data-sort>ID</th>
-                            <th data-sort>VIN</th>
-                            <th data-sort>Year</th>
-                            <th data-sort>Make</th>
-                            <th data-sort>Model</th>
-                            <th>Color</th>
-                            <th data-sort>Price</th>
-                            <th data-sort>Status</th>
-                            <th>Image</th>
-                            <th>Edit</th>
-                        </tr>
+                                <tr>
+                                    <th data-sort>ID</th>
+                                    <th data-sort>Year</th>
+                                    <th data-sort>Make</th>
+                                    <th data-sort>Model</th>
+                                    <th>Color</th>
+                                    <th data-sort>Price</th>
+                                    <th data-sort>Status</th>
+                                    <th data-sort>VIN</th>
+                                    <th>Image</th>
+                                    <th>Edit</th>
+                                </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($rows as $r): ?>
                             <tr>
                                 <td><?= (int)$r['vehicle_id'] ?></td>
-                                <td><?= e($r['vin']) ?></td>
                                 <td><?= e($r['model_year']) ?></td>
                                 <td><?= e($r['make']) ?></td>
                                 <td><?= e($r['model']) ?></td>
@@ -189,6 +158,7 @@ function vehicle_img_src($val): string
                                     <?php $cls = $r['status'] === 'available' ? 'ok' : ($r['status'] === 'reserved' ? 'warn' : 'muted'); ?>
                                     <span class="badge <?= $cls ?>"><?= e($r['status']) ?></span>
                                 </td>
+                                <td><?= e($r['vin']) ?></td>
                                 <td>
                                     <?php
                                     $src = vehicle_img_src($r['image_filename'] ?? '');
@@ -199,11 +169,11 @@ function vehicle_img_src($val): string
                                         $fs = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . $src;
                                         if (is_file($fs)) {
                                             echo '<a href="' . e($src) . '" target="_blank" rel="noopener">';
-                                            echo '  <img src="' . e($src) . '" alt="' . e($alt) . '" style="max-width:80px; height:auto; border-radius:6px; border:1px solid #e5e7eb;">';
+                                            echo '  <img class="thumb-img" src="' . e($src) . '" alt="' . e($alt) . '">';
                                             echo '</a>';
                                         } else {
                                             echo '<a href="' . e($src) . '" target="_blank" rel="noopener">';
-                                            echo '  <img src="' . e($src) . '" alt="' . e($alt) . '" style="max-width:80px; height:auto; border-radius:6px; border:1px solid #e5e7eb;">';
+                                            echo '  <img class="thumb-img" src="' . e($src) . '" alt="' . e($alt) . '">';
                                             echo '</a>';
                                         }
                                     }
@@ -211,7 +181,7 @@ function vehicle_img_src($val): string
                                 </td>
 
 
-                                <td><a class="btn secondary" href="edit.php?id=<?= (int)$r['vehicle_id'] ?>">Edit</a></td>
+                                <td><a class="btn secondary" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= (int)$r['vehicle_id'] ?>">Edit</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -219,7 +189,7 @@ function vehicle_img_src($val): string
             </div>
 
             <!-- CLIENT-SIDE page links -->
-            <div class="header" style="margin-top:12px">
+            <div class="header mt-12">
                 <div class="muted" id="metaLbl"></div>
                 <div>
                     <a class="btn secondary" href="#" id="prevBtn">Prev</a>
@@ -230,26 +200,50 @@ function vehicle_img_src($val): string
         </div>
     </div>
 
-    <script src="../../assets/table.js"></script>
+    <script src="<?= BASE_URL ?>/assets/table.js"></script>
     <script>
-        SimpleTable.init({
-            tableId: 'vehiclesTable',
-            perPage: parseInt(document.getElementById('per_page')?.value || '10', 10),
+        (function(){
+            var ppEl = document.getElementById('per_page');
+            SimpleTable.init({
+                tableId: 'vehiclesTable',
+                perPage: parseInt((ppEl && ppEl.value) || '10', 10),
 
-            // filter controls
-            selSearch: '#q',
-            selStatus: '#status',
-            selYearMin: '#year_min',
-            selYearMax: '#year_max',
-            selPriceMin: '#price_min',
-            selPriceMax: '#price_max',
-            selPerPage: '#per_page',
+                // filter controls
+                selSearch: '#q',
+                selStatus: '#status',
+                selYearMin: '#year_min',
+                selYearMax: '#year_max',
+                selPriceMin: '#price_min',
+                selPriceMax: '#price_max',
+                selPerPage: '#per_page',
 
-            // pager + meta label
-            selPrev: '#prevBtn',
-            selNext: '#nextBtn',
-            selMeta: '#metaLbl'
-        });
+                // pager + meta label
+                selPrev: '#prevBtn',
+                selNext: '#nextBtn',
+                selMeta: '#metaLbl'
+            });
+        })();
+
+        // reset button: clear filter inputs and re-run client-side update
+        (function() {
+            var reset = document.getElementById('resetBtn');
+            if (!reset) return;
+            reset.addEventListener('click', function(e) {
+                e.preventDefault();
+                var ids = ['q','status','year_min','year_max','price_min','price_max'];
+                ids.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    if (el.tagName.toLowerCase() === 'select') el.selectedIndex = 0;
+                    else el.value = '';
+                });
+                var per = document.getElementById('per_page');
+                if (per) per.value = '10';
+                if (window.SimpleTable && typeof window.SimpleTable.update === 'function') {
+                    window.SimpleTable.update();
+                }
+            });
+        })();
     </script>
 </body>
 

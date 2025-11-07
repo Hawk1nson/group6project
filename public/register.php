@@ -48,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+<?php require_once __DIR__ . '/bootstrap.php'; ?>
+
 <!doctype html>
 <html>
 
@@ -55,16 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Create Account - CDMS</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <?php include __DIR__ . '/../includes/header.php'; ?>
 </head>
 
 <body>
     <div class="center">
         <div class="card login">
-            <h2 style="margin:0 0 8px">Create Account</h2>
+            <h2 class="h2-tight">Create Account</h2>
             <p class="note">Dealership Employee Registration</p>
 
-            <?php if ($msg): ?><p style="color:#b91c1c;"><?= e($msg) ?></p><?php endif; ?>
+            <?php if ($msg): ?><p class="alert-error"><?= e($msg) ?></p><?php endif; ?>
 
             <form method="post">
                 <label>First Name</label>
@@ -89,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <option value="admin">Admin</option>
                 </select>
 
-                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div class="flex-between mt-12">
                     <button type="submit">Create Account</button>
                     <a href="login.php" class="btn secondary">Cancel</a>
                 </div>

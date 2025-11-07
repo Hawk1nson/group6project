@@ -1,11 +1,20 @@
 <?php
+require_once __DIR__ . '/bootstrap.php';
+if (!auth_check()) {
+    redirect('login.php');
+}
+$u = auth_user();
+?>
+
+<?php
 // MAIN dashboard for dealership users
 
 // added dashboard stats and recent activity
 
-require_once __DIR__ . '/../../lib/auth.php';
-require_once __DIR__ . '/../../lib/helpers.php';
-require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/helpers.php';
+require_once __DIR__ . '/../lib/db.php';
+
 if (!auth_check()) redirect('../login.php');
 
 $u   = auth_user();
@@ -98,6 +107,9 @@ try {
 }
 
 ?>
+
+<?php require_once __DIR__ . '/bootstrap.php'; ?>
+
 <!doctype html>
 <html>
 
@@ -105,7 +117,7 @@ try {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CDMS — Dealership Dashboard</title>
-    <link rel="stylesheet" href="../assets/style.css">
+    <?php include __DIR__ . '/../includes/header.php'; ?>
 </head>
 
 <body>
@@ -115,8 +127,12 @@ try {
 
             <div class="header">
                 <div class="title">Welcome, <?= e($u['name'] ?? 'User') ?></div>
-                <div class="right"><a href="vehicles/index.php">Go to Vehicles</a> • <a href="../logout.php">Logout</a></div>
+                <div class="right"><a href="vehicles.php">Go to Vehicles</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
+
+            <?php if (!empty($_GET['msg'])): ?>
+                <div class="alert alert-success"><?= htmlspecialchars($_GET['msg']) ?></div>
+            <?php endif; ?>
 
             <!-- Top KPI row -->
             <div class="stats">
@@ -169,11 +185,11 @@ try {
             </div>
 
             <!-- Two-column: Recent activity & Quick actions -->
-            <div class="two-col" style="margin-top:12px">
+            <div class="two-col mt-12">
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-                        <div style="font-weight:700">Recent Reservations</div>
-                        <a class="btn secondary" href="reservations/index.php">View all</a>
+                    <div class="flex-between mb-8">
+                        <div class="fw-700">Recent Reservations</div>
+                        <a class="btn secondary" href="reservations.php">View all</a>
                     </div>
                     <ul class="list">
                         <?php if (!$recent_res): ?>
@@ -187,7 +203,7 @@ try {
                             ?>
                                 <li>
                                     <div>
-                                        <div style="font-weight:600"><?= e($who ?: 'Unknown Customer') ?></div>
+                                        <div class="fw-600"><?= e($who ?: 'Unknown Customer') ?></div>
                                         <small><?= e($car) ?> • <?= e($when) ?></small>
                                     </div>
                                     <div><span class="pill <?= $cls ?>"><?= e($st) ?></span></div>
@@ -198,24 +214,24 @@ try {
                 </div>
 
                 <div class="card">
-                    <div style="font-weight:700; margin-bottom:8px">Quick Actions</div>
+                    <div class="fw-700 mb-8">Quick Actions</div>
                     <div class="actions">
-                        <a class="btn" href="vehicles/index.php">Manage Vehicles</a>
-                        <a class="btn" href="reservations/index.php">View Reservations</a>
-                        <a class="btn" href="customers/index.php">Find Customer</a>
-                        <a class="btn" href="#" onclick="return false" style="opacity:.6; cursor:not-allowed">New Sale (coming soon)</a>
+                        <a class="btn" href="vehicles.php">Manage Vehicles</a>
+                        <a class="btn" href="reservations.php">View Reservations</a>
+                        <a class="btn btn-primary" href="<?= BASE_URL ?>/add_reservations.php">Add Reservation</a>
+                        <a class="btn" href="customers.php">Find Customer</a>
+                        <a class="btn btn-primary" href="<?= BASE_URL ?>/new_sale.php">New Sale</a>
                     </div>
-
-                    <div class="note" style="margin-top:10px">
+                    <div class="note mt-10">
                     </div>
                 </div>
             </div>
 
             <!-- Recent sales - good addition, but needs work to make it more functional -->
-            <div class="card" style="margin-top:12px">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-                    <div style="font-weight:700">Recent Sales</div>
-                    <a class="btn secondary" href="#" onclick="return false" style="opacity:.6; cursor:not-allowed">Sales (coming soon)</a>
+            <div class="card mt-12">
+                <div class="flex-between mb-8">
+                    <div class="fw-700">Recent Sales</div>
+                    <a class="btn" href="sales.php">Sales</a>
                 </div>
                 <table class="table">
                     <thead>

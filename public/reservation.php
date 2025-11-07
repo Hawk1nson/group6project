@@ -1,10 +1,13 @@
 <?php
 // this page shows all reservations made by customers - viewable by dealership staff only
 
-require_once __DIR__ . '/../../../lib/auth.php';
-require_once __DIR__ . '/../../../lib/helpers.php';
-require_once __DIR__ . '/../../../lib/db.php';
-if (!auth_check()) redirect('../../login.php');
+require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/helpers.php';
+require_once __DIR__ . '/../lib/db.php';
+
+require_once __DIR__ . '/bootstrap.php';
+
+if (!auth_check()) redirect('/../login.php');
 
 $pdo = DB::conn();
 
@@ -36,6 +39,7 @@ $date_from  = $_GET['date_from'] ?? '';
 $date_to    = $_GET['date_to'] ?? '';
 $per_page   = (int)($_GET['per_page'] ?? 10);
 ?>
+
 <!doctype html>
 <html>
 
@@ -43,31 +47,21 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CDMS — Reservations</title>
-    <link rel="stylesheet" href="../../assets/style.css">
-    <style>
-        .filters .row {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(150px, 1fr));
-            gap: 8px;
-        }
-
-        .filters .row>div {
-            min-width: 150px
-        }
-
-        .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-    </style>
+    <?php include __DIR__ . '/../includes/header.php'; ?>
 </head>
 
-<body>
+<body class="page-reservations">
     <div class="layout">
-        <?php include __DIR__ . '/../_sidebar.php'; ?>
+        <?php include __DIR__ . '/_sidebar.php'; ?>
         <div class="content">
             <div class="header">
                 <div class="title">Reservations</div>
-                <div class="right"><a href="../dashboard.php">Dashboard</a> • <a href="../../logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+            </div>
+
+            <!-- Add Reservation button placed directly under the title -->
+            <div class="mt-10">
+                <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/add_reservations.php">Add Reservation</a>
             </div>
 
             <!-- FILTERS -->
@@ -112,7 +106,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
                             </select>
                         </div>
                     </div>
-                    <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="flex-row-wrap mt-10">
                         <button class="btn" type="button" onclick="window.SimpleTable && SimpleTable.update && SimpleTable.update()">Apply</button>
                         <a class="btn secondary" href="index.php">Reset</a>
                     </div>
@@ -120,7 +114,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
             </div>
 
             <!-- TABLE -->
-            <div class="card" style="overflow:auto">
+            <div class="card scrollable">
                 <table id="reservationsTable" class="table">
                     <thead>
                         <tr>
@@ -167,7 +161,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
             </div>
 
             <!-- client-side pager/meta -->
-            <div class="header" style="margin-top:12px">
+            <div class="header mt-12">
                 <div class="muted" id="metaLbl"></div>
                 <div>
                     <a class="btn secondary" href="#" id="prevBtn">Prev</a>
@@ -178,7 +172,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
         </div>
     </div>
 
-    <script src="../../assets/table.js"></script>
+    <script src="<?= BASE_URL ?>/assets/table.js"></script>
     <script>
         // Initialize the general interactive behavior
         SimpleTable.init({

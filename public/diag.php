@@ -53,3 +53,6 @@ try {
 } catch (Throwable $e) {
     echo "❌ DB error: " . $e->getMessage();
 }
+?>
+
+<?php require_once __DIR__ . '/bootstrap.php'; ?>

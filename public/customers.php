@@ -1,10 +1,13 @@
 <?php
 // customer listing page for all DEALERSHIP users
 
-require_once __DIR__ . '/../../../lib/auth.php';
-require_once __DIR__ . '/../../../lib/helpers.php';
-require_once __DIR__ . '/../../../lib/db.php';
-if (!auth_check()) redirect('../../login.php');
+require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/helpers.php';
+require_once __DIR__ . '/../lib/db.php';
+
+require_once __DIR__ . '/bootstrap.php';
+
+if (!auth_check()) redirect('/../login.php');
 
 $pdo = DB::conn();
 
@@ -49,6 +52,9 @@ $rows = $pdo->query("
 $q        = $_GET['q'] ?? '';
 $per_page = (int)($_GET['per_page'] ?? 10);
 ?>
+
+
+
 <!doctype html>
 <html>
 
@@ -56,32 +62,25 @@ $per_page = (int)($_GET['per_page'] ?? 10);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CDMS — Customers</title>
-    <link rel="stylesheet" href="../../assets/style.css">
-    <style>
-        .filters .row {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(200px, 1fr));
-            gap: 8px;
-        }
-
-        .filters .row>div {
-            min-width: 200px
-        }
-
-        .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-    </style>
+    <?php include __DIR__ . '/../includes/header.php'; ?>
 </head>
 
-<body>
+<body class="page-customers">
     <div class="layout">
-        <?php include __DIR__ . '/../_sidebar.php'; ?>
+        <?php include __DIR__ . '/_sidebar.php'; ?>
         <div class="content">
             <div class="header">
                 <div class="title">Customers</div>
-                <div class="right"><a href="../dashboard.php">Dashboard</a> • <a href="../../logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
+
+            <div class="mt-8">
+                <a class="btn primary" href="<?= BASE_URL ?>/customer_add.php">Add Customer</a>
+            </div>
+
+            <?php if (!empty($_GET['msg'])): ?>
+                <div class="card mb-12 alert-success"><?= e($_GET['msg']) ?></div>
+            <?php endif; ?>
 
             <!-- FILTERS -->
             <div class="card filters">
@@ -101,7 +100,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
                         </div>
                         <div></div>
                     </div>
-                    <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="flex-row-wrap mt-10">
                         <button class="btn" type="button" onclick="window.SimpleTable && SimpleTable.update && SimpleTable.update()">Apply</button>
                         <a class="btn secondary" href="index.php">Reset</a>
                     </div>
@@ -109,7 +108,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
             </div>
 
             <!-- TABLE -->
-            <div class="card" style="overflow:auto">
+            <div class="card scrollable">
                 <table id="customersTable" class="table">
                     <thead>
                         <tr>
@@ -152,7 +151,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
                                 <?php if ($optional['created_at']): ?>
                                     <td><?= e($created) ?></td>
                                 <?php endif; ?>
-                                <td><a class="btn secondary" href="edit.php?id=<?= (int)$r['customer_id'] ?>">Edit</a></td>
+                                <td><a class="btn secondary" href="<?= BASE_URL ?>/customer_edit.php?id=<?= (int)$r['customer_id'] ?>">Edit</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -160,7 +159,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
             </div>
 
             <!-- client-side pager/meta -->
-            <div class="header" style="margin-top:12px">
+            <div class="header mt-12">
                 <div class="muted" id="metaLbl"></div>
                 <div>
                     <a class="btn secondary" href="#" id="prevBtn">Prev</a>
@@ -171,7 +170,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
         </div>
     </div>
 
-    <script src="../../assets/table.js"></script>
+    <script src="<?= BASE_URL ?>/assets/table.js"></script>
     <script>
         SimpleTable.init({
             tableId: 'customersTable',

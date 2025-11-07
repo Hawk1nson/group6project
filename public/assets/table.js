@@ -1,4 +1,3 @@
-
 (function () {
   function text(el) {
     return (el.textContent || "").trim();
@@ -64,7 +63,13 @@
         var color = text(tds[4]);
         var price = num(text(tds[5]));
         var stat = text(tds[6]);
-        var hay = [year, make, model, color].join(" ");
+        // build a haystack from the entire row so searches match VIN and other columns
+        var hay = Array.prototype.slice
+          .call(tds)
+          .map(function (c) {
+            return text(c);
+          })
+          .join(" ");
 
         if (qv && !matches(hay, qv)) return false;
         if (sv && stat !== sv) return false;
@@ -109,12 +114,33 @@
           "Total: " + total + " • Page " + state.page + " of " + pages;
       if (prevBtn) prevBtn.disabled = state.page <= 1;
       if (nextBtn) nextBtn.disabled = state.page >= pages;
+      // reflect sort state on headers so UI can show sort indicators
+      headers.forEach(function (th, i) {
+        if (!th.hasAttribute("data-sort")) return;
+        if (state.sortCol === i) {
+          th.setAttribute("data-sorted", "true");
+          th.setAttribute("data-dir", state.dir);
+        } else {
+          th.removeAttribute("data-sorted");
+          th.removeAttribute("data-dir");
+        }
+      });
+    }
+
+    // expose this table instance's update() so pages can call SimpleTable.update()
+    // (keeps backward compatibility with pages that call SimpleTable.update())
+    if (typeof window !== "undefined") {
+      window.SimpleTable = window.SimpleTable || {};
+      window.SimpleTable.update = update;
     }
 
     // Header click sorting
     headers.forEach(function (th, i) {
       if (!th.hasAttribute("data-sort")) return;
       th.style.cursor = "pointer";
+      // make header keyboard accessible
+      th.setAttribute('role', 'button');
+      th.tabIndex = 0;
       th.addEventListener("click", function () {
         if (state.sortCol === i) {
           state.dir = state.dir === "asc" ? "desc" : "asc";
@@ -123,6 +149,12 @@
           state.dir = "asc";
         }
         update();
+      });
+      th.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
+          ev.preventDefault();
+          this.click();
+        }
       });
     });
 

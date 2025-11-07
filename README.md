@@ -1,6 +1,8 @@
 ## CDMS Dashboard & Customer web app
 
-# Iteration 1
+# For additional information on updates to this application, please see UPDATE_LOG.md
+
+## Iteration 1
     login page, create user page (w/ hashed password, remove plaintext functionality)
         - ADD some sort of logo to dealership login screen
     main dashboard page

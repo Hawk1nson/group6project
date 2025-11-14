@@ -70,7 +70,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
         <?php include __DIR__ . '/_sidebar.php'; ?>
         <div class="content">
             <div class="header">
-                <div class="title">Customers</div>
+                <div class="title">Customers Home</div>
                 <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
 

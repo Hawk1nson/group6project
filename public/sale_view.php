@@ -19,11 +19,11 @@ try {
         "SELECT s.*, c.first_name AS c_first, c.last_name AS c_last, c.email AS c_email, c.phone AS c_phone,
                 v.make, v.model, v.model_year, v.vin, v.location,
                 e.first_name AS e_first, e.last_name AS e_last, e.email AS e_email
-         FROM sales s
-         LEFT JOIN customers c ON c.customer_id = s.customer_id
-         LEFT JOIN vehicles  v ON v.vehicle_id  = s.vehicle_id
-         LEFT JOIN employees e ON e.employee_id = s.employee_id
-         WHERE s.sale_id = ? LIMIT 1"
+        FROM sales s
+        LEFT JOIN customers c ON c.customer_id = s.customer_id
+        LEFT JOIN vehicles  v ON v.vehicle_id  = s.vehicle_id
+        LEFT JOIN employees e ON e.employee_id = s.employee_id
+        WHERE s.sale_id = ? LIMIT 1"
     );
     $st->execute([$id]);
     $sale = $st->fetch(PDO::FETCH_ASSOC);

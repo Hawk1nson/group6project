@@ -67,7 +67,7 @@ $rows = $stmt->fetchAll();
         <?php include __DIR__ . '/_sidebar.php'; ?>
         <div class="content">
             <div class="header">
-                <div class="title">Vehicles</div>
+                <div class="title">Vehicles Home</div>
                 <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
 

@@ -40,6 +40,9 @@ if (isset($_GET['logout'])) {
 
 <body>
     <div class="center">
+        <div class="login-logo" style="text-align:center;margin-bottom:12px;">
+            <img src="<?= BASE_URL ?>/../images/system/NLAuto_logo.png" alt="NL Auto" style="max-width:260px;width:100%;height:auto;display:inline-block;">
+        </div>
         <div class="card login">
             <h2 class="h2-tight">CDMS — Dealership Login</h2>
 

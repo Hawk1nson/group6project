@@ -85,9 +85,9 @@ body {
 }
 
 .sidebar {
-    width: 240px;
-    min-width: 240px;
-    flex: 0 0 240px;
+    width: 260px;
+    min-width: 260px;
+    flex: 0 0 260px;
     /* prevent shrinking so sidebar stays same width on all pages */
     background: var(--sidebar);
     color: var(--sidebar-text);

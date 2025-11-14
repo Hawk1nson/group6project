@@ -17,13 +17,16 @@ function is_active(string $needle, string $uri): string
 }
 ?>
 <div class="sidebar">
-    <div class="brand">CDMS • Dealership</div>
+    <div class="sidebar-logo" style="text-align:center;margin-bottom:10px;">
+        <img src="<?= $base ?>/../images/system/NLAuto_logo.png" alt="NL Auto" style="max-width:180px;width:100%;height:auto;display:inline-block;">
+    </div>
+    <div class="brand">CDMS • Dealership Portal</div>
     <div class="note mt-10">
         <?= e($u['name'] ?? 'User') ?>
     </div>
     <nav>
             <a href="<?= $base ?>/dashboard.php"
-            class="<?= is_active('/dashboard.php', $uri) ?>">Return to Dashboard</a>
+            class="<?= is_active('/dashboard.php', $uri) ?>">Dashboard • Home</a>
 
         <div class="muted">Inventory</div>
 

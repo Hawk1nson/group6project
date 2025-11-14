@@ -1,0 +1,77 @@
+### OS-SPECIFIC ###
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows (in case teammates use it)
+Thumbs.db
+desktop.ini
+
+### IDE / EDITOR ###
+# VS Code settings (keep only workspace settings if needed)
+.vscode/
+.history/
+*.code-workspace
+
+# PHPStorm / IntelliJ
+.idea/
+
+### COMPOSER / PHP ###
+# If you ever use Composer
+/vendor/
+
+### LOGS & TEMP FILES ###
+*.log
+*.tmp
+*.cache
+*.bak
+*.swp
+*.swo
+php_errors.log
+error_log
+
+### XAMPP / SYSTEM FILES ###
+# XAMPP session/cache/temp folders
+xamppfiles/temp/
+xamppfiles/logs/
+
+### ENVIRONMENT FILES ###
+# DB credentials, API keys, etc.
+.env
+.env.*
+*.env.local
+*.env.backup
+
+### DATABASE EXPORTS ###
+# Ignore generated SQL backup files
+*.sql
+*.sql.gz
+*.dump
+
+### UPLOADS ###
+# Only ignore if uploads are user-generated (not images your app needs)
+public/uploads/*
+public/images/uploads/*
+
+# But keep placeholder folder if needed
+!public/uploads/.gitkeep
+!public/images/uploads/.gitkeep
+
+### NODE / FRONTEND (if ever added later) ###
+node_modules/
+dist/
+build/
+
+### DOCUMENTS (OPTIONAL) ###
+# Ignore local copies of PPTX/PDF unless you want to track them
+*.pptx
+*.pdf
+# Remove these lines if you DO want to commit them
+
+### MISC ###
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.backup

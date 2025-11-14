@@ -54,7 +54,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
         <div class="content">
             <div class="header">
                 <div class="title">Sales</div>
-                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
             <div class="mt-10">
                 <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/new_sale.php">New Sale</a><br>
@@ -140,7 +140,10 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
                                 <td><?= e($veh) ?></td>
                                 <td><?= e($emp) ?></td>
                                 <td class="mono"><?= e($r['emp_email'] ?? '') ?></td>
-                                <td><a class="btn secondary" href="<?= BASE_URL ?>/sale_edit.php?id=<?= (int)$r['sale_id'] ?>">Edit</a></td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/sale_view.php?id=<?= (int)$r['sale_id'] ?>">View</a>
+                                    <a class="btn btn-primary btn-sm" href="<?= BASE_URL ?>/sale_edit.php?id=<?= (int)$r['sale_id'] ?>">Edit</a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

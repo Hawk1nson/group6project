@@ -22,8 +22,8 @@ function is_active(string $needle, string $uri): string
         <?= e($u['name'] ?? 'User') ?>
     </div>
     <nav>
-        <a href="<?= $base ?>/dashboard.php"
-            class="<?= is_active('/dashboard.php', $uri) ?>">Dashboard</a>
+            <a href="<?= $base ?>/dashboard.php"
+            class="<?= is_active('/dashboard.php', $uri) ?>">Return to Dashboard</a>
 
         <div class="muted">Inventory</div>
 

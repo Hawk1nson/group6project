@@ -127,7 +127,19 @@ try {
 
             <div class="header">
                 <div class="title">Welcome, <?= e($u['name'] ?? 'User') ?></div>
-                <div class="right"><a href="vehicles.php">Go to Vehicles</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+                <div class="right" style="display:flex;align-items:center;gap:10px;">
+                    <div class="theme-menu-wrapper" style="position:relative;">
+                        <button id="theme-gear" aria-haspopup="true" aria-expanded="false" title="Theme settings" style="background:transparent;border:1px solid var(--border);padding:6px;border-radius:8px;cursor:pointer;color:var(--text)">
+                            ⚙️
+                        </button>
+                        <div id="theme-menu" role="menu" aria-label="Theme" style="display:none;position:absolute;right:0;top:36px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;box-shadow:0 6px 18px rgba(2,6,23,0.12);z-index:50;">
+                            <button class="theme-option" data-theme="system" role="menuitem" title="Use system preference" style="display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--text)">🖥 System</button>
+                            <button class="theme-option" data-theme="light" role="menuitem" title="Light theme" style="display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--text)">🌤 Light</button>
+                            <button class="theme-option" data-theme="dark" role="menuitem" title="Dark theme" style="display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--text)">🌙 Dark</button>
+                        </div>
+                    </div>
+                    <a href="vehicles.php">Go to Vehicles</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a>
+                </div>
             </div>
 
             <?php if (!empty($_GET['msg'])): ?>
@@ -218,7 +230,7 @@ try {
                     <div class="actions">
                         <a class="btn" href="vehicles.php">Manage Vehicles</a>
                         <a class="btn" href="reservations.php">View Reservations</a>
-                        <a class="btn btn-primary" href="<?= BASE_URL ?>/add_reservations.php">Add Reservation</a>
+                        <a class="btn btn-primary" href="<?= BASE_URL ?>/add_reservation.php">Add Reservation</a>
                         <a class="btn" href="customers.php">Find Customer</a>
                         <a class="btn btn-primary" href="<?= BASE_URL ?>/new_sale.php">New Sale</a>
                     </div>
@@ -270,5 +282,64 @@ try {
         </div>
     </div>
 </body>
+
+<script>
+    (function(){
+        var gear = document.getElementById('theme-gear');
+        var menu = document.getElementById('theme-menu');
+        if (!gear || !menu) return;
+        var options = menu.querySelectorAll('.theme-option');
+        function applyThemeChoice(v){
+            try {
+                if (v === 'light') document.documentElement.setAttribute('data-theme','light');
+                else if (v === 'dark') document.documentElement.setAttribute('data-theme','dark');
+                else document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', v);
+            } catch (err) { }
+        }
+        function setAriaExpanded(val){ gear.setAttribute('aria-expanded', val ? 'true' : 'false'); }
+
+        // open/close menu
+        function openMenu(){ menu.style.display = 'block'; setAriaExpanded(true); }
+        function closeMenu(){ menu.style.display = 'none'; setAriaExpanded(false); }
+
+        gear.addEventListener('click', function(e){
+            e.stopPropagation();
+            if (menu.style.display === 'block') closeMenu(); else openMenu();
+        });
+
+        // click outside closes
+        document.addEventListener('click', function(){ closeMenu(); });
+        // keyboard support
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
+
+        // init selection highlight based on localStorage
+        try {
+            var cur = localStorage.getItem('theme') || 'system';
+            options.forEach(function(b){
+                b.classList.toggle('active', b.getAttribute('data-theme') === cur);
+            });
+        } catch (err) { }
+
+        options.forEach(function(b){
+            b.addEventListener('click', function(e){
+                e.stopPropagation();
+                var v = this.getAttribute('data-theme');
+                applyThemeChoice(v);
+                options.forEach(function(x){ x.classList.remove('active'); });
+                this.classList.add('active');
+                closeMenu();
+            });
+        });
+
+        // sync across tabs
+        window.addEventListener('storage', function(e){
+            if (e.key === 'theme'){
+                var val = e.newValue || 'system';
+                options.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-theme') === val); });
+            }
+        });
+    })();
+</script>
 
 </html>

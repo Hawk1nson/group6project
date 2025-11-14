@@ -40,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sale_date   = trim($_POST['sale_date'] ?? '');
     $sale_price  = trim($_POST['sale_price'] ?? '');
     $notes       = trim($_POST['notes'] ?? '');
+    $payment_method = trim(strtolower($_POST['payment_method'] ?? ''));
+    $allowed_methods = ['cash','finance','lease','other'];
+    if ($payment_method === '' || !in_array($payment_method, $allowed_methods, true)) {
+        $payment_method = 'finance';
+    }
 
     $errors = [];
     if ($customer_id <= 0) $errors[] = 'Please select a customer.';
@@ -49,14 +54,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            // Some schemas may not have notes; use COALESCE approach isn't needed, attempt update with notes column if exists
-            // Try a safe update that sets notes if column exists
+            // Check schema for optional columns (notes, payment_method)
             $cols = $pdo->query("SHOW COLUMNS FROM sales")->fetchAll(PDO::FETCH_COLUMN);
             $hasNotes = in_array('notes', $cols, true);
+            $hasPayment = in_array('payment_method', $cols, true);
 
-            if ($hasNotes) {
+            // Build update variants depending on available columns
+            if ($hasNotes && $hasPayment) {
+                $u = $pdo->prepare('UPDATE sales SET customer_id = ?, vehicle_id = ?, employee_id = ?, sale_date = ?, sale_price = ?, notes = ?, payment_method = ? WHERE sale_id = ?');
+                $u->execute([$customer_id, $vehicle_id, $employee_id, $sale_date, $sale_price, $notes !== '' ? $notes : null, $payment_method, $id]);
+            } elseif ($hasNotes) {
                 $u = $pdo->prepare('UPDATE sales SET customer_id = ?, vehicle_id = ?, employee_id = ?, sale_date = ?, sale_price = ?, notes = ? WHERE sale_id = ?');
                 $u->execute([$customer_id, $vehicle_id, $employee_id, $sale_date, $sale_price, $notes !== '' ? $notes : null, $id]);
+            } elseif ($hasPayment) {
+                $u = $pdo->prepare('UPDATE sales SET customer_id = ?, vehicle_id = ?, employee_id = ?, sale_date = ?, sale_price = ?, payment_method = ? WHERE sale_id = ?');
+                $u->execute([$customer_id, $vehicle_id, $employee_id, $sale_date, $sale_price, $payment_method, $id]);
             } else {
                 $u = $pdo->prepare('UPDATE sales SET customer_id = ?, vehicle_id = ?, employee_id = ?, sale_date = ?, sale_price = ? WHERE sale_id = ?');
                 $u->execute([$customer_id, $vehicle_id, $employee_id, $sale_date, $sale_price, $id]);
@@ -139,13 +151,25 @@ $employees = $pdo->query('SELECT employee_id, first_name, last_name FROM employe
                     </div>
 
                     <?php
-                    // include notes if present in schema
+                    // include optional columns if present in schema
                     $cols = $pdo->query('SHOW COLUMNS FROM sales')->fetchAll(PDO::FETCH_COLUMN);
                     $hasNotes = in_array('notes', $cols, true);
+                    $hasPayment = in_array('payment_method', $cols, true);
                     ?>
                     <?php if ($hasNotes): ?>
                         <label>Notes</label>
                         <textarea name="notes" rows="4"><?= e($_POST['notes'] ?? $sale['notes'] ?? '') ?></textarea>
+                    <?php endif; ?>
+
+                    <?php if ($hasPayment):
+                        $currMethod = $_POST['payment_method'] ?? $sale['payment_method'] ?? 'finance';
+                    ?>
+                        <label>Payment Method</label>
+                        <select name="payment_method">
+                            <?php foreach (['cash','finance','lease','other'] as $m): ?>
+                                <option value="<?= $m ?>" <?= ($currMethod === $m) ? 'selected' : '' ?>><?= ucfirst($m) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     <?php endif; ?>
 
                     <div class="mt-12">

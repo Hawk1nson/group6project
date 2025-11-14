@@ -13,6 +13,53 @@
     --sidebar-active: #111827;
     --border: #e5e7eb;
     --table-stripe: #f8fafc;
+    /* surface/background tokens for cards, inputs, table headers */
+    --card-bg: #ffffff;
+    --card-hover: #f8fafc;
+    --input-bg: #ffffff;
+    --table-head-bg: #f3f4f6;
+    /* button text color for primary buttons */
+    --button-text: #ffffff;
+}
+
+/* Dark theme variables override when data-theme="dark" is set on <html> */
+[data-theme="dark"] {
+    --bg: #071124; /* very dark blue-black */
+    --text: #9fb0bd; /* darker off-white to increase contrast on surface backgrounds */
+    --muted: #9aa6b2; /* keep fairly muted but readable */
+    --accent: #4f9cff;
+    --accent-hover: #3b82f6;
+    --sidebar: #061023;
+    --sidebar-text: #d4e6fb;
+    --sidebar-active: #062034;
+    --border: #1b2732; /* stronger border contrast */
+    --table-stripe: #0b1620; /* slightly lighter than page bg for row striping */
+    --card-bg: #0f1a27; /* card / panel background */
+    --card-hover: #0b1626;
+    --input-bg: #071524;
+    --table-head-bg: #0b1624;
+    --button-text: #ffffff;
+}
+
+/* If user chooses 'system' (no data-theme attr), allow OS/browser pref to control dark mode */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --bg: #071124;
+    --text: #9fb0bd;
+        --muted: #9aa6b2;
+        --accent: #4f9cff;
+        --accent-hover: #3b82f6;
+        --sidebar: #061023;
+        --sidebar-text: #d4e6fb;
+        --sidebar-active: #062034;
+        --border: #1b2732;
+        --table-stripe: #0b1620;
+        --card-bg: #0f1a27;
+        --card-hover: #0b1626;
+        --input-bg: #071524;
+        --table-head-bg: #0b1624;
+        --button-text: #ffffff;
+    }
 }
 
 * {
@@ -156,7 +203,7 @@ thead th[data-sort]:focus {
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
-    background: #fff
+    background: var(--card-bg)
 }
 
 .grid {
@@ -178,7 +225,7 @@ thead th[data-sort]:focus {
 }
 
 .table thead th {
-    background: #f3f4f6
+    background: var(--table-head-bg)
 }
 
 .table tbody tr:nth-child(odd) {
@@ -221,34 +268,82 @@ select {
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: #fff
+    background: var(--input-bg)
 }
 
-button,
+/* Ensure typed text and placeholders use theme-aware colors */
+input, select, textarea {
+    color: var(--text);
+}
+input::placeholder, textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+}
+
+/* Better focus ring for accessibility */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    border-color: var(--accent);
+}
+
+/* Modern flat primary button + outlined secondary */
 .btn {
-    display: inline-block;
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--accent);
-    background: var(--accent);
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 0;
+    background: var(--accent) !important;
+    color: var(--button-text) !important;
     text-decoration: none;
-    cursor: pointer
+    cursor: pointer;
+    font-weight: 600;
 }
 
-button:hover,
-.btn:hover {
+.btn:hover { filter: brightness(0.95); }
+
+.btn:active { transform: translateY(1px); }
+
+/* Make secondary buttons visually identical to primary for clarity */
+.btn.secondary {
+    background: var(--accent) !important;
+    color: var(--button-text) !important;
+    border: 0 !important;
+}
+
+.btn.btn-primary, .btn-primary {
+    background: var(--accent);
+    color: var(--button-text);
+    border-color: var(--accent);
+}
+.btn.btn-primary:hover, .btn-primary:hover {
     background: var(--accent-hover);
-    border-color: var(--accent-hover)
+    color: var(--button-text);
+}
+
+.btn.btn-success, .btn-success {
+    background: #10b981; /* green */
+    color: #fff;
+    border-color: #10b981;
+}
+.btn.btn-success:hover, .btn-success:hover {
+    background: #059669;
 }
 
 .btn.secondary {
-    background: #fff;
-    color: var(--accent);
+    background: var(--card-bg);
+    color: var(--text);
+    border-color: var(--border);
 }
 
 .btn.secondary:hover {
-    background: #f8fafc
+    background: var(--card-hover);
+}
+
+.btn.secondary:hover {
+    background: var(--card-hover)
 }
 
 /* Small button variant */
@@ -609,4 +704,19 @@ button:hover,
     line-height: 1.6;
     border-radius: 10px;
     resize: vertical;
+}
+
+/* Theme menu styles (small, self-contained) */
+.theme-option.active {
+    background: rgba(37,99,235,0.08);
+    color: var(--accent);
+}
+.theme-option:hover {
+    background: rgba(37,99,235,0.04);
+}
+
+/* Small responsive adjustments for the gear control on narrow screens */
+@media (max-width: 600px) {
+    .header .right { gap: 6px; }
+    #theme-gear { padding:6px; }
 }

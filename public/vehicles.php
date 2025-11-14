@@ -68,7 +68,7 @@ $rows = $stmt->fetchAll();
         <div class="content">
             <div class="header">
                 <div class="title">Vehicles</div>
-                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
 
             <!-- Add Vehicle button placed directly under the title -->

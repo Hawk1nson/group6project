@@ -71,7 +71,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
         <div class="content">
             <div class="header">
                 <div class="title">Customers</div>
-                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+                <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
 
             <div class="mt-8">

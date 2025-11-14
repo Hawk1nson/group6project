@@ -17,6 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $vehicle_id  = (int)($_POST['vehicle_id'] ?? 0);
     $sale_price  = trim($_POST['sale_price'] ?? '');
     $notes       = trim($_POST['notes'] ?? '');
+    $payment_method = trim(strtolower($_POST['payment_method'] ?? ''));
+
+    // normalize/validate payment method
+    $allowed_methods = ['cash','finance','lease','other'];
+    if ($payment_method === '' || !in_array($payment_method, $allowed_methods, true)) {
+        $payment_method = 'finance';
+    }
 
     if ($employee_id <= 0) $errors[] = 'Please select a salesperson.';
     if ($customer_id <= 0) $errors[] = 'Please select a customer.';
@@ -37,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
             // Insert sale — your DB trigger is expected to mark vehicle as sold
             $ins = $pdo->prepare(
-                "INSERT INTO sales (vehicle_id, customer_id, employee_id, sale_price, notes)
-                VALUES (:vehicle_id, :customer_id, :employee_id, :sale_price, :notes)"
+                "INSERT INTO sales (vehicle_id, customer_id, employee_id, sale_price, notes, payment_method)
+                VALUES (:vehicle_id, :customer_id, :employee_id, :sale_price, :notes, :payment_method)"
             );
             $ins->execute([
                 ':vehicle_id'  => $vehicle_id,
@@ -46,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':employee_id' => $employee_id,
                 ':sale_price'  => number_format((float)$sale_price, 2, '.', ''),
                 ':notes'       => ($notes !== '' ? $notes : null),
+                ':payment_method' => $payment_method,
             ]);
             $saleId = $pdo->lastInsertId();
             $pdo->commit();
@@ -138,7 +146,7 @@ $vehicles = $pdo->query(
             <div class="header">
                 <div class="title">New Sale</div>
                 <div class="right">
-                    <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
+                    <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
                 </div>
             </div>
 
@@ -200,6 +208,18 @@ $vehicles = $pdo->query(
                                         <input type="number" step="0.01" min="0" name="sale_price" id="sale_price" required>
                                         <div id="askingPriceInline" class="asking-price-highlight asking-price-inline" aria-live="polite">$0.00</div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="payment_method">Payment Method</label>
+                                    <select name="payment_method" id="payment_method" required>
+                                        <option value="cash">Cash</option>
+                                        <option value="finance" selected>Finance</option>
+                                        <option value="lease">Lease</option>
+                                        <option value="other">Other</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -297,7 +317,9 @@ $vehicles = $pdo->query(
                 const custTxt = cust && cust.options[cust.selectedIndex] ? cust.options[cust.selectedIndex].text : '';
                 const vehTxt = veh && veh.options[veh.selectedIndex] ? veh.options[veh.selectedIndex].text : '';
                 const priceTxt = priceEl && priceEl.value ? Number(priceEl.value).toFixed(2) : '0.00';
-                const msg = `Confirm sale?\n\nSalesperson: ${empTxt}\nCustomer: ${custTxt}\nVehicle: ${vehTxt}\nPrice: $${priceTxt}\n\nProceed to record this sale?`;
+                const pmEl = document.getElementById('payment_method');
+                const pmTxt = pmEl && pmEl.options[pmEl.selectedIndex] ? pmEl.options[pmEl.selectedIndex].text : 'Finance';
+                const msg = `Confirm sale?\n\nSalesperson: ${empTxt}\nCustomer: ${custTxt}\nVehicle: ${vehTxt}\nPrice: $${priceTxt}\nPayment method: ${pmTxt}\n\nProceed to record this sale?`;
                 if (!window.confirm(msg)) { e.preventDefault(); return false; }
             });
         }

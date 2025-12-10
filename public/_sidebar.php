@@ -46,6 +46,11 @@ function is_active(string $needle, string $uri): string
 
         <a href="<?= BASE_URL ?>/employees.php"
             class="<?= is_active('/employees.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Employees</a>
+
+        <div class="muted">Communication</div>
+
+        <a href="<?= BASE_URL ?>/message.php"
+            class="<?= is_active('/message.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Customer Messages</a>
         <!-- 
         <div class="muted">Account</div>
         -->

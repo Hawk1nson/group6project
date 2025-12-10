@@ -106,6 +106,25 @@ try {
 } catch (Throwable $e) {
 }
 
+// Recent customer messages from contact log (last 6 entries)
+$recent_msgs = [];
+try {
+    $logFile = APP_ROOT . '/storage/logs/contact_messages.log';
+    if (is_file($logFile)) {
+        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = array_slice($lines, -6);
+        foreach ($lines as $line) {
+            $data = @json_decode($line, true);
+            if ($data && is_array($data)) {
+                $recent_msgs[] = $data;
+            }
+        }
+        $recent_msgs = array_reverse($recent_msgs); // newest first
+    }
+} catch (Throwable $e) {
+    $recent_msgs = [];
+}
+
 ?>
 
 <?php require_once __DIR__ . '/bootstrap.php'; ?>
@@ -240,6 +259,43 @@ try {
             </div>
 
             <!-- Recent sales - good addition, but needs work to make it more functional -->
+            <div class="card mt-12">
+                <div class="flex-between mb-8">
+                    <div class="fw-700">Recent Messages</div>
+                    <a class="btn secondary" href="message.php">View all</a>
+                </div>
+                <ul class="list">
+                    <?php if (!$recent_msgs): ?>
+                        <li><small>No messages logged yet</small></li>
+                    <?php else: foreach ($recent_msgs as $m):
+                        $who = trim(($m['name'] ?? '')) ?: 'Unknown';
+                        $email = $m['email'] ?? '';
+                        $tag = $m['tag'] ?? '';
+                        $status = !empty($m['sent_email']) ? 'Sent' : 'Saved';
+                        $badgeCls = !empty($m['sent_email']) ? 'ok' : 'warn';
+                        $ts = isset($m['ts']) ? date('M j, Y g:ia', strtotime($m['ts'])) : '—';
+                        $veh = '';
+                        if (!empty($m['vehicle'])) {
+                            $v = $m['vehicle'];
+                            $veh = trim(($v['model_year'] ?? '') . ' ' . ($v['make'] ?? '') . ' ' . ($v['model'] ?? ''));
+                        }
+                        $msg = trim($m['message'] ?? '');
+                        if (strlen($msg) > 110) {
+                            $msg = substr($msg, 0, 107) . '...';
+                        }
+                    ?>
+                        <li>
+                            <div>
+                                <div class="fw-600"><?= e($who) ?><?= $tag ? ' • ' . e($tag) : '' ?></div>
+                                <small><?= e($ts) ?><?= $veh ? ' • ' . e($veh) : '' ?><?= $email ? ' • ' . e($email) : '' ?></small>
+                                <?php if ($msg): ?><div class="note"><?= e($msg) ?></div><?php endif; ?>
+                            </div>
+                            <div><span class="pill <?= $badgeCls ?>"><?= e($status) ?></span></div>
+                        </li>
+                    <?php endforeach; endif; ?>
+                </ul>
+            </div>
+
             <div class="card mt-12">
                 <div class="flex-between mb-8">
                     <div class="fw-700">Recent Sales</div>

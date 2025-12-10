@@ -110,17 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('Failed to move uploaded file from ' . $file['tmp_name'] . ' to ' . $targetPath);
             }
 
-            // delete previous image file (if any) so each vehicle has only one image
-            $oldName = $veh['image_filename'] ?? '';
-            if ($oldName !== '') {
-                $oldBase = basename($oldName);
-                $oldPath = $targetDir . '/' . $oldBase;
-                if (is_file($oldPath) && $oldBase !== $basename) {
-                    @unlink($oldPath);
-                }
-            }
-
-            // set the image filename to the basename (vehicle_img_src will resolve path)
+            // Set the image filename to the new basename. Do NOT delete the previous image file.
+            // (Keeping previous files avoids removing images that may be reused across vehicles.)
             $img = $basename;
         }
 

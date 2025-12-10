@@ -1,5 +1,6 @@
 :root {
     --bg: #ffffff;
+    --sidebar-width: 260px;
     /* background color */
     --text: #111418;
     /* primary text color */
@@ -82,6 +83,51 @@ body {
 .layout {
     display: flex;
     min-height: 100vh
+}
+
+/* Site wrap centers sidebar + content together for balanced layout */
+.site-wrap {
+    max-width: calc(var(--sidebar-width) + 1100px);
+    margin: 24px auto;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+/* Shop content: ensure content area stays centered within its column and uses available space */
+.shop-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* Responsive: stack sidebar above content on narrow screens */
+@media (max-width: 900px) {
+    .site-wrap {
+        max-width: 100%;
+        margin: 12px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .layout {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        flex: none;
+        position: relative;
+        height: auto;
+        margin-bottom: 12px;
+    }
+    .shop-content {
+        max-width: none;
+        margin: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 .sidebar {

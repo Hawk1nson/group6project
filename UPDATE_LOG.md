@@ -66,3 +66,23 @@ __________
 __________
 ### Quick QA status
 - Nearly all functions should be working correctly.  Will continue to search for bugs and document fixes.
+
+## 🚧 Elaboration 3 / Iteration 3:
+
+## PART 1
+
+### Customer-facing updates
+- Added customer login/registration flow and public sidebar greeting; login link hidden when signed in.
+- Made vehicle thumbnails clickable to detail view and added reservation request deep link from vehicle pages into the contact form.
+- Contact form now prefills for logged-in customers, supports Reservation tag, and writes robustly to `storage/logs/contact_messages.log`.
+
+### Messaging and reservations
+- Dealer message viewer shows tags/status and reads from the contact log; dashboard now has a Recent Messages widget.
+- Customer profile page added (customer-only) showing their info and their sent messages with a cancel-reservation action that logs a cancellation.
+- Employee toast notifications poll for new reservation or cancellation events and pop up on any dealer page.
+
+### Reliability / safety
+- Hardened contact logging (mkdir/chmod/touch + temp fallback) so missing log files no longer block message capture.
+
+### UI polish
+- Minor dashboard refinements and quick links; profile page styling for message history.

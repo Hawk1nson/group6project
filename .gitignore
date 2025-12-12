@@ -4,6 +4,9 @@
 .AppleDouble
 .LSOverride
 
+# ignore report files .csv
+.csv
+
 # Windows (in case teammates use it)
 Thumbs.db
 desktop.ini

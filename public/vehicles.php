@@ -142,6 +142,7 @@ $rows = $stmt->fetchAll();
                                     <th data-sort>Status</th>
                                     <th data-sort>VIN</th>
                                     <th>Image</th>
+                                    <th>View</th>
                                     <th>Edit</th>
                                 </tr>
                     </thead>
@@ -166,21 +167,15 @@ $rows = $stmt->fetchAll();
                                         echo '<span class="note">(none)</span>';
                                     } else {
                                         $alt = ($r['make'] ?? '') . ' ' . ($r['model'] ?? '');
-                                        $fs = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . $src;
-                                        if (is_file($fs)) {
-                                            echo '<a href="' . e($src) . '" target="_blank" rel="noopener">';
-                                            echo '  <img class="thumb-img" src="' . e($src) . '" alt="' . e($alt) . '">';
-                                            echo '</a>';
-                                        } else {
-                                            echo '<a href="' . e($src) . '" target="_blank" rel="noopener">';
-                                            echo '  <img class="thumb-img" src="' . e($src) . '" alt="' . e($alt) . '">';
-                                            echo '</a>';
-                                        }
+                                        echo '<button type="button" class="thumb-btn" data-full="' . e($src) . '" aria-label="View larger image of ' . e($alt) . '">';
+                                        echo '  <img class="thumb-img" src="' . e($src) . '" alt="' . e($alt) . '">';
+                                        echo '</button>';
                                     }
                                     ?>
                                 </td>
 
 
+                                <td><a class="btn" href="<?= BASE_URL ?>/vehicle_view_dealer.php?id=<?= (int)$r['vehicle_id'] ?>">View</a></td>
                                 <td><a class="btn secondary" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= (int)$r['vehicle_id'] ?>">Edit</a></td>
                             </tr>
                         <?php endforeach; ?>
@@ -197,6 +192,14 @@ $rows = $stmt->fetchAll();
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Image lightbox -->
+    <div id="imgLightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Vehicle image preview">
+        <div class="lightbox-inner">
+            <button type="button" class="lightbox-close" aria-label="Close image">×</button>
+            <img id="lightboxImg" src="" alt="Vehicle image">
         </div>
     </div>
 
@@ -242,6 +245,41 @@ $rows = $stmt->fetchAll();
                 if (window.SimpleTable && typeof window.SimpleTable.update === 'function') {
                     window.SimpleTable.update();
                 }
+            });
+        })();
+
+        // Image lightbox: open on thumbnail click, close on overlay/close/Esc
+        (function(){
+            var modal = document.getElementById('imgLightbox');
+            var modalImg = document.getElementById('lightboxImg');
+            var closeBtn = document.querySelector('.lightbox-close');
+            if (!modal || !modalImg) return;
+
+            function open(src, alt){
+                modalImg.src = src;
+                modalImg.alt = alt || 'Vehicle image';
+                modal.classList.remove('hidden');
+            }
+            function close(){
+                modal.classList.add('hidden');
+                modalImg.src = '';
+            }
+
+            document.addEventListener('click', function(e){
+                var btn = e.target.closest('.thumb-btn');
+                if (!btn) return;
+                e.preventDefault();
+                var src = btn.getAttribute('data-full');
+                var alt = btn.querySelector('img')?.getAttribute('alt') || 'Vehicle image';
+                if (src) open(src, alt);
+            });
+
+            if (closeBtn) closeBtn.addEventListener('click', close);
+            modal.addEventListener('click', function(e){
+                if (e.target === modal) close();
+            });
+            document.addEventListener('keydown', function(e){
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
             });
         })();
     </script>

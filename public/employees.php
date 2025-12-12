@@ -7,6 +7,8 @@ require_once __DIR__ . '/bootstrap.php';
 
 
 if (!auth_check()) redirect('/../login.php');
+$u = auth_user();
+$is_admin = isset($u['role']) && $u['role'] === 'admin';
 
 // error handling - remove for production
 ini_set('display_errors', 1);
@@ -130,7 +132,7 @@ $per_page = (int)($_GET['per_page'] ?? 10);
                             <th data-sort>Role</th>
                             <?php if ($opt_is_active): ?><th data-sort>Status</th><?php endif; ?>
                             <?php if ($opt_hire_date): ?><th data-sort>Hire Date</th><?php endif; ?>
-                            <th>Edit</th>
+                            <?php if ($is_admin): ?><th>Edit</th><?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +160,9 @@ $per_page = (int)($_GET['per_page'] ?? 10);
                                     ?>
                                     <td><?= e($hd) ?></td>
                                 <?php endif; ?>
-                                <td><a class="btn secondary" href="edit.php?id=<?= (int)$r['employee_id'] ?>">Edit</a></td>
+                                <?php if ($is_admin): ?>
+                                    <td><a class="btn secondary" href="employee_edit.php?id=<?= (int)$r['employee_id'] ?>">Edit</a></td>
+                                <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

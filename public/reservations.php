@@ -128,6 +128,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
                             <th data-sort>Vehicle</th>
                             <th data-sort>Notes</th></th>
                             <th data-sort>Status</th>
+                            <th>View</th>
                             <th>Edit</th>
                         </tr>
                     </thead>
@@ -153,6 +154,7 @@ $per_page   = (int)($_GET['per_page'] ?? 10);
                                 <td><?= e($veh) ?></td>
                                 <td><?= e($r['notes'] ?? '') ?></td>
                                 <td><span class="badge <?= $statusCls ?>"><?= e($statusText) ?></span></td>
+                                <td><a class="btn" href="reservation_view.php?id=<?= (int)$r['reservation_id'] ?>">View</a></td>
                                 <td><a class="btn secondary" href="reservation_edit.php?id=<?= (int)$r['reservation_id'] ?>">Edit</a></td>
                             </tr>
                         <?php endforeach; ?>

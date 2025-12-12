@@ -8,6 +8,31 @@ require_once __DIR__ . '/bootstrap.php';
 if (!auth_check()) redirect('login.php');
 
 $pdo = DB::conn();
+$notice = '';
+
+// Handle delete request (any authenticated user)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete_message') {
+    $deleteId = (int)($_POST['msg_id'] ?? 0);
+    $logFileDel = APP_ROOT . '/storage/logs/contact_messages.log';
+    if ($deleteId > 0 && is_file($logFileDel) && is_writable($logFileDel)) {
+        try {
+            $lines = file($logFileDel, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $idx = $deleteId - 1; // _id starts at 1 in original order
+            if ($idx >= 0 && $idx < count($lines)) {
+                array_splice($lines, $idx, 1);
+                $data = implode("\n", $lines);
+                file_put_contents($logFileDel, $data . (strlen($data) ? "\n" : ''), LOCK_EX);
+                redirect('message.php?msg=' . urlencode('Message deleted.'));
+            } else {
+                $notice = 'Message not found in log.';
+            }
+        } catch (Throwable $e) {
+            $notice = 'Could not delete message: ' . e($e->getMessage());
+        }
+    } else {
+        $notice = 'Log file is missing or not writable.';
+    }
+}
 
 // Read messages from log file
 $logFile = APP_ROOT . '/storage/logs/contact_messages.log';
@@ -41,8 +66,6 @@ if ($view_id) {
 
 // Prefill filter inputs
 $q = $_GET['q'] ?? '';
-$date_from = $_GET['date_from'] ?? '';
-$date_to = $_GET['date_to'] ?? '';
 $per_page = (int)($_GET['per_page'] ?? 20);
 ?>
 
@@ -53,17 +76,6 @@ $per_page = (int)($_GET['per_page'] ?? 20);
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CDMS — Customer Messages</title>
     <?php include __DIR__ . '/../includes/header.php'; ?>
-    <style>
-        .message-detail { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 16px; }
-        .message-detail .section { margin-bottom: 16px; }
-        .message-detail .section-title { font-weight: 700; margin-bottom: 6px; color: var(--accent); }
-        .message-detail .field { margin-bottom: 4px; }
-        .message-detail .field-label { font-weight: 600; display: inline-block; min-width: 100px; }
-        .message-detail .message-text { background: var(--input-bg); border: 1px solid var(--border); padding: 12px; border-radius: 6px; white-space: pre-wrap; word-wrap: break-word; }
-        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-        .status-sent { background: #10b981; color: white; }
-        .status-saved { background: #f59e0b; color: white; }
-    </style>
 </head>
 <body class="page-messages">
     <div class="layout">
@@ -74,6 +86,12 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                 <div class="right"><a href="<?= BASE_URL ?>/dashboard.php">Return to Dashboard</a> • <a href="<?= BASE_URL ?>/logout.php">Logout</a></div>
             </div>
 
+            <?php if (!empty($_GET['msg'])): ?>
+                <div class="card mb-10 alert-success"><?= e($_GET['msg']) ?></div>
+            <?php elseif ($notice): ?>
+                <div class="card mb-10 alert-error"><?= e($notice) ?></div>
+            <?php endif; ?>
+
             <?php if ($viewing): ?>
                 <!-- Detail View -->
                 <div class="mt-10">
@@ -81,6 +99,27 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                 </div>
 
                 <div class="message-detail">
+                                <?php
+                                $isReservationTag = isset($viewing['tag']) && strtolower($viewing['tag']) === 'reservation';
+                                $reservationQuery = '';
+                                if ($isReservationTag) {
+                                    $prefill = [];
+                                    if (!empty($viewing['email'])) {
+                                        $prefill['customer_email'] = $viewing['email'];
+                                    }
+                                    $vehicleIdPrefill = null;
+                                    if (!empty($viewing['vehicle']['vehicle_id'])) {
+                                        $vehicleIdPrefill = (int)$viewing['vehicle']['vehicle_id'];
+                                    } elseif (!empty($viewing['vehicle_id'])) {
+                                        $vehicleIdPrefill = (int)$viewing['vehicle_id'];
+                                    }
+                                    if ($vehicleIdPrefill) {
+                                        $prefill['vehicle_id'] = $vehicleIdPrefill;
+                                    }
+                                    $reservationQuery = http_build_query($prefill);
+                                }
+                                ?>
+
                     <div class="section">
                         <div class="section-title">Message #<?= (int)$viewing['_id'] ?></div>
                         <div class="field"><span class="field-label">Received:</span> <?= e(isset($viewing['ts']) ? date('M j, Y g:i A', strtotime($viewing['ts'])) : 'Unknown') ?></div>
@@ -109,7 +148,7 @@ $per_page = (int)($_GET['per_page'] ?? 20);
 
                     <?php if (!empty($viewing['vehicle'])): ?>
                         <div class="section">
-                            <div class="section-title">Vehicle Interest</div>
+                            <div class="section-title">Vehicle</div>
                             <?php
                             $v = $viewing['vehicle'];
                             $year = $v['model_year'] ?? '';
@@ -125,14 +164,30 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                                 <div class="field"><span class="field-label">Price:</span> $<?= e($price) ?></div>
                             <?php endif; ?>
                             <?php if ($vid): ?>
-                                <div class="field"><span class="field-label">View Vehicle:</span> <a class="btn btn-sm" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= $vid ?>">Edit Vehicle</a></div>
+                                <div class="field"><span class="field-label">View Vehicle:</span>
+                                    <a class="btn btn-sm" href="<?= BASE_URL ?>/vehicle_view_dealer.php?id=<?= $vid ?>">View</a>
+                                    <a class="btn btn-sm secondary" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= $vid ?>">Edit</a>
+                                </div>
                             <?php endif; ?>
                         </div>
                     <?php elseif (!empty($viewing['vehicle_id'])): ?>
                         <div class="section">
-                            <div class="section-title">Vehicle Interest</div>
+                            <div class="section-title">Vehicle</div>
                             <div class="field"><span class="field-label">Vehicle ID:</span> <?= (int)$viewing['vehicle_id'] ?></div>
-                            <div class="field"><a class="btn btn-sm" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= (int)$viewing['vehicle_id'] ?>">View Vehicle</a></div>
+                            <div class="field">
+                                <a class="btn btn-sm" href="<?= BASE_URL ?>/vehicle_view_dealer.php?id=<?= (int)$viewing['vehicle_id'] ?>">View</a>
+                                <a class="btn btn-sm secondary" href="<?= BASE_URL ?>/vehicle_edit.php?id=<?= (int)$viewing['vehicle_id'] ?>">Edit</a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($isReservationTag): ?>
+                        <div class="section">
+                            <div class="section-title">Reservation</div>
+                            <div class="field">
+                                <span class="field-label">Action:</span>
+                                <a class="btn btn-primary" href="<?= BASE_URL ?>/add_reservation.php<?= $reservationQuery ? '?' . e($reservationQuery) : '' ?>">Create Reservation</a>
+                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -140,6 +195,12 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                         <div class="section-title">Message</div>
                         <div class="message-text"><?= e($viewing['message'] ?? '') ?></div>
                     </div>
+
+                    <form method="post" onsubmit="return confirm('Delete this message? This cannot be undone.');" class="mt-10">
+                        <input type="hidden" name="action" value="delete_message">
+                        <input type="hidden" name="msg_id" value="<?= (int)$viewing['_id'] ?>">
+                        <button class="btn secondary" type="submit">Delete Message</button>
+                    </form>
                 </div>
 
             <?php else: ?>
@@ -150,25 +211,15 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                 <div class="card filters">
                     <form onsubmit="return false;">
                         <div class="row">
-                            <div>
-                                <label>Search</label>
-                                <input id="q" type="text" value="<?= e($q) ?>" placeholder="Name, email, message">
-                            </div>
-                            <div>
-                                <label>Date ≥</label>
-                                <input id="date_from" type="date" value="<?= e($date_from) ?>">
-                            </div>
-                            <div>
-                                <label>Date ≤</label>
-                                <input id="date_to" type="date" value="<?= e($date_to) ?>">
-                            </div>
-                            <div>
-                                <label>Per page</label>
-                                <select id="per_page">
-                                    <?php foreach ([10, 20, 30, 50] as $pp): ?>
-                                        <option value="<?= $pp ?>" <?= $per_page === $pp ? 'selected' : '' ?>><?= $pp ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="collapsible-search">
+                                <button id="searchToggle" type="button" class="search-toggle" aria-expanded="<?= $q ? 'true' : 'false' ?>" aria-controls="searchBody">
+                                    🔍 Search
+                                </button>
+                                <div id="searchBody" class="search-body <?= $q ? 'open' : '' ?>">
+                                    <label for="q">Search</label>
+                                    <input id="q" type="text" value="<?= e($q) ?>" placeholder="Name, email, message">
+                                    <span class="search-hint">Click to open search, then type to filter.</span>
+                                </div>
                             </div>
                         </div>
                         <div class="flex-row-wrap mt-10">
@@ -233,7 +284,17 @@ $per_page = (int)($_GET['per_page'] ?? 20);
 
                 <!-- client-side pager/meta -->
                 <div class="header mt-12">
-                    <div class="muted" id="metaLbl"></div>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                        <div class="muted" id="metaLbl"></div>
+                        <div class="per-page-inline" style="display:flex;align-items:center;gap:6px;">
+                            <label for="per_page" class="muted" style="margin:0;">Per page</label>
+                            <select id="per_page" style="width:auto;min-width:80px;">
+                                <?php foreach ([10, 20, 30, 50] as $pp): ?>
+                                    <option value="<?= $pp ?>" <?= $per_page === $pp ? 'selected' : '' ?>><?= $pp ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
                     <div>
                         <a class="btn secondary" href="#" id="prevBtn">Prev</a>
                         <a class="btn secondary" href="#" id="nextBtn">Next</a>
@@ -248,6 +309,26 @@ $per_page = (int)($_GET['per_page'] ?? 20);
     <?php if (!$viewing && !empty($messages)): ?>
         <script src="<?= BASE_URL ?>/assets/table.js"></script>
         <script>
+            (function(){
+                var toggle = document.getElementById('searchToggle');
+                var body = document.getElementById('searchBody');
+                var input = document.getElementById('q');
+                if (!toggle || !body) return;
+                function setOpen(open){
+                    body.classList.toggle('open', !!open);
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    if (open && input) {
+                        setTimeout(function(){ input.focus(); }, 50);
+                    }
+                }
+                toggle.addEventListener('click', function(){
+                    setOpen(!body.classList.contains('open'));
+                });
+                if (input && input.value.trim()) {
+                    setOpen(true);
+                }
+            })();
+
             // Initialize base interactive behavior
             SimpleTable.init({
                 tableId: 'messagesTable',
@@ -259,42 +340,6 @@ $per_page = (int)($_GET['per_page'] ?? 20);
                 selMeta: '#metaLbl'
             });
 
-            // Extra filters: date range
-            (function() {
-                var df = document.querySelector('#date_from');
-                var dt = document.querySelector('#date_to');
-                var table = document.getElementById('messagesTable');
-
-                function rowVisible(tr) {
-                    var tds = tr.children;
-                    var date = tds[1]?.textContent.trim().slice(0, 10); // YYYY-MM-DD
-
-                    // date range
-                    if (df && df.value && date < df.value) return false;
-                    if (dt && dt.value && date > dt.value) return false;
-
-                    return true;
-                }
-
-                function applyDateFilter() {
-                    if (!table) return;
-                    var rows = table.querySelectorAll('tbody tr');
-                    rows.forEach(function(tr) {
-                        var vis = rowVisible(tr);
-                        tr.style.display = vis ? '' : 'none';
-                        tr.setAttribute('data-filtered', vis ? '0' : '1');
-                    });
-                    if (window.SimpleTable && window.SimpleTable.update) {
-                        window.SimpleTable.update();
-                    }
-                }
-
-                if (df) df.addEventListener('change', applyDateFilter);
-                if (dt) dt.addEventListener('change', applyDateFilter);
-
-                // initial
-                applyDateFilter();
-            })();
         </script>
     <?php endif; ?>
 </body>

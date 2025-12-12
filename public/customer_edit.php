@@ -3,6 +3,8 @@ require_once __DIR__ . '/bootstrap.php';
 
 // require auth
 if (!auth_check()) redirect('/login.php');
+$u = auth_user();
+$is_admin = isset($u['role']) && $u['role'] === 'admin';
 
 $pdo = DB::conn();
 $id = (int)($_GET['id'] ?? 0);
@@ -43,12 +45,18 @@ $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // handle delete action
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-        try {
-            $d = $pdo->prepare('DELETE FROM customers WHERE customer_id = ?');
-            $d->execute([$id]);
-            redirect('customers.php?msg=' . urlencode('Customer deleted'));
-        } catch (Throwable $e) {
-            $msg = 'Error deleting customer: ' . e($e->getMessage());
+        if (!$is_admin) {
+            $msg = 'You do not have permission to delete customers.';
+        } elseif (empty($_POST['confirm_password'])) {
+            $msg = 'Password confirmation is required to delete customers.';
+        } else {
+            try {
+                $d = $pdo->prepare('DELETE FROM customers WHERE customer_id = ?');
+                $d->execute([$id]);
+                redirect('customers.php?msg=' . urlencode('Customer deleted'));
+            } catch (Throwable $e) {
+                $msg = 'Error deleting customer: ' . e($e->getMessage());
+            }
         }
     }
 
@@ -184,13 +192,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="mt-12">
                         <button>Save</button>
                         <a class="btn secondary" href="<?= BASE_URL ?>/customers.php">Cancel</a>
-                        <button type="button" class="btn secondary" id="deleteBtn" style="margin-left:8px;">Delete</button>
+                        <?php if ($is_admin): ?>
+                            <button type="button" class="btn secondary" id="deleteBtn" style="margin-left:8px;">Delete</button>
+                        <?php endif; ?>
                     </div>
                 </form>
 
-                <form id="deleteForm" method="post" style="display:none;">
-                    <input type="hidden" name="action" value="delete">
-                </form>
+                <?php if ($is_admin): ?>
+                    <form id="deleteForm" method="post" style="display:none;">
+                        <input type="hidden" name="action" value="delete">
+                    </form>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -200,9 +212,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var del = document.getElementById('deleteBtn');
             if (!del) return;
             del.addEventListener('click', function(e){
-                if (confirm('Delete this customer? This action is permanent and cannot be undone. Are you sure?')) {
-                    document.getElementById('deleteForm').submit();
-                }
+                var first = confirm('Delete this customer? This cannot be undone.');
+                if (!first) return;
+                var pwd = prompt('To confirm, enter your password:');
+                if (pwd === null || pwd === '') return;
+                var form = document.getElementById('deleteForm');
+                if (!form) return;
+                var inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'confirm_password';
+                inp.value = pwd;
+                form.appendChild(inp);
+                form.submit();
             });
         })();
     </script>

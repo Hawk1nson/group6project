@@ -22,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
         if (!$is_admin) {
             $msg = 'You do not have permission to delete reservations.';
+        } elseif (empty($_POST['confirm_password'])) {
+            $msg = 'Password confirmation is required to delete reservations.';
         } else {
             try {
                 $d = $pdo->prepare('DELETE FROM reservations WHERE reservation_id = ?');
@@ -181,9 +183,18 @@ $statusOptions = $pdo->query("SELECT DISTINCT status FROM reservations ORDER BY 
             var del = document.getElementById('deleteBtn');
             if (!del) return;
             del.addEventListener('click', function(e){
-                if (confirm('Delete this reservation? This action is permanent and cannot be undone.')) {
-                    document.getElementById('deleteForm').submit();
-                }
+                var first = confirm('Delete this reservation from inventory? This cannot be undone.');
+                if (!first) return;
+                var pwd = prompt('To confirm, enter your password:');
+                if (pwd === null || pwd === '') return;
+                var form = document.getElementById('deleteForm');
+                if (!form) return;
+                var inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'confirm_password';
+                inp.value = pwd;
+                form.appendChild(inp);
+                form.submit();
             });
         })();
     </script>

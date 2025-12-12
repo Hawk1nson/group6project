@@ -52,7 +52,6 @@ if (isset($_GET['logout'])) {
                 </p>
             <?php endif; ?>
 
-            <p class="note">Phase 1: internal dealership portal</p>
             <?php if ($err): ?><p class="alert-error"><?= e($err) ?></p><?php endif; ?>
 
             <?php if ($registered): ?>

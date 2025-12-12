@@ -4,8 +4,16 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . '/bootstrap.php';
 
+if (!auth_check()) redirect('/../login.php');
+$currentUser = auth_user();
+$currentEmployeeId = isset($currentUser['id']) ? (int)$currentUser['id'] : 0;
+
 $pdo = DB::conn();
 $errors = [];
+
+$prefCustomerId = isset($_GET['customer_id']) ? (int)$_GET['customer_id'] : 0;
+$prefVehicleId  = isset($_GET['vehicle_id']) ? (int)$_GET['vehicle_id'] : 0;
+$prefCustomerEmail = isset($_GET['customer_email']) ? trim($_GET['customer_email']) : '';
 
 // Handle submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -98,6 +106,17 @@ $employees = $pdo->query("SELECT employee_id, first_name, last_name FROM employe
 $customers = $pdo->query("SELECT customer_id, first_name, last_name FROM customers ORDER BY last_name, first_name")->fetchAll(PDO::FETCH_ASSOC);
 $vehicles  = $pdo->query("SELECT vehicle_id, make, model, model_year, vin FROM vehicles WHERE status = 'available' ORDER BY model_year DESC, make, model")->fetchAll(PDO::FETCH_ASSOC);
 
+// If a customer email was provided and no customer_id yet, try to preselect matching customer
+if ($prefCustomerId === 0 && $prefCustomerEmail !== '') {
+    try {
+        $st = $pdo->prepare('SELECT customer_id FROM customers WHERE email = ? LIMIT 1');
+        $st->execute([$prefCustomerEmail]);
+        $prefCustomerId = (int)($st->fetchColumn() ?: 0);
+    } catch (Throwable $e) {
+        $prefCustomerId = 0;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,17 +148,19 @@ $vehicles  = $pdo->query("SELECT vehicle_id, make, model, model_year, vin FROM v
                                 <select name="employee_id" id="employee_id" required>
                                     <option value="">-- Select --</option>
                                     <?php foreach ($employees as $emp): ?>
-                                        <option value="<?= (int)$emp['employee_id'] ?>"><?= htmlspecialchars($emp['last_name'] . ', ' . $emp['first_name']) ?></option>
-                                    <?php endforeach; ?>
+                                            <?php $eid = (int)$emp['employee_id']; ?>
+                                            <option value="<?= $eid ?>" <?= ($eid === $currentEmployeeId) ? 'selected' : '' ?>><?= htmlspecialchars($emp['last_name'] . ', ' . $emp['first_name']) ?></option>
+                                        <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="customer_id">Customer</label>
                                 <select name="customer_id" id="customer_id" required>
                                     <option value="">-- Select --</option>
-                                    <?php foreach ($customers as $c): ?>
-                                        <option value="<?= (int)$c['customer_id'] ?>"><?= htmlspecialchars($c['last_name'] . ', ' . $c['first_name']) ?></option>
-                                    <?php endforeach; ?>
+                                        <?php foreach ($customers as $c): ?>
+                                            <?php $cid = (int)$c['customer_id']; ?>
+                                            <option value="<?= $cid ?>" <?= ($cid === $prefCustomerId) ? 'selected' : '' ?>><?= htmlspecialchars($c['last_name'] . ', ' . $c['first_name']) ?></option>
+                                        <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -150,7 +171,8 @@ $vehicles  = $pdo->query("SELECT vehicle_id, make, model, model_year, vin FROM v
                                 <select name="vehicle_id" id="vehicle_id" required>
                                     <option value="">-- Select available vehicle --</option>
                                     <?php foreach ($vehicles as $v): ?>
-                                        <option value="<?= (int)$v['vehicle_id'] ?>"><?= htmlspecialchars("{$v['model_year']} {$v['make']} {$v['model']} (VIN: {$v['vin']})") ?></option>
+                                        <?php $vid = (int)$v['vehicle_id']; ?>
+                                        <option value="<?= $vid ?>" <?= ($vid === $prefVehicleId) ? 'selected' : '' ?>><?= htmlspecialchars("{$v['model_year']} {$v['make']} {$v['model']} (VIN: {$v['vin']})") ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -173,7 +195,7 @@ $vehicles  = $pdo->query("SELECT vehicle_id, make, model, model_year, vin FROM v
                         <div class="form-row">
                             <div class="form-group full">
                                 <label for="notes">Notes</label>
-                                <textarea name="notes" id="notes" rows="4" placeholder="Optional notes..."></textarea>
+                                <textarea name="notes" id="notes" rows="6" style="min-height:140px;width:100%;" placeholder="Optional notes..."></textarea>
                             </div>
                         </div>
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 07, 2025 at 02:38 AM
+-- Generation Time: Dec 12, 2025 at 01:27 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -39,70 +39,72 @@ CREATE TABLE `customers` (
   `state_province` varchar(80) DEFAULT NULL,
   `postal_code` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `password_hash` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `email`, `phone`, `address_line1`, `address_line2`, `city`, `state_province`, `postal_code`, `created_at`, `updated_at`) VALUES
-(1, 'Jamie', 'Ng', 'jamie.ng@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(2, 'Taylor', 'Kim', 'taylor.kim@example.com', '555-3002', NULL, NULL, 'Minneapolis', 'MN', '55401', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(3, 'Riley', 'Ortiz', 'riley.ortiz@example.com', '555-3003', NULL, NULL, 'Maplewood', 'MN', '55109', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(4, 'Avery', 'Johnson', 'avery.johnson@example.com', '555-3101', '124 Oak St', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(5, 'Jordan', 'Smith', 'jordan.smith@example.com', '555-3102', '451 Maple Ave', NULL, 'Minneapolis', 'MN', '55403', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(6, 'Cameron', 'Davis', 'cameron.davis@example.com', '555-3103', '67 Elm Rd', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(7, 'Taylor', 'Nguyen', 'taylor.nguyen@example.com', '555-3104', '98 Lakeview Dr', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(8, 'Morgan', 'Lopez', 'morgan.lopez@example.com', '555-3105', '220 Ridge Ln', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(9, 'Riley', 'Baker', 'riley.baker@example.com', '555-3106', '18 Pine Ct', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(10, 'Sydney', 'Martinez', 'sydney.martinez@example.com', '555-3107', '712 Birch Blvd', NULL, 'Bloomington', 'MN', '55420', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(11, 'Drew', 'Gonzalez', 'drew.gonzalez@example.com', '555-3108', '501 Highland Rd', NULL, 'Inver Grove Heights', 'MN', '55076', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(12, 'Payton', 'Lee', 'payton.lee@example.com', '555-3109', '330 Main St', NULL, 'Stillwater', 'MN', '55082', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(13, 'Jamie', 'Rivera', 'jamie.rivera@example.com', '555-3110', '27 Sunset Dr', NULL, 'Cottage Grove', 'MN', '55016', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(14, 'Alex', 'Foster', 'alex.foster@example.com', '555-3111', '8 Meadow Ln', NULL, 'Oakdale', 'MN', '55128', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(15, 'Quinn', 'Miller', 'quinn.miller@example.com', '555-3112', '46 Cedar St', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(16, 'Casey', 'Hernandez', 'casey.hernandez@example.com', '555-3113', '93 Walnut Ave', NULL, 'Mendota Heights', 'MN', '55120', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(17, 'Skyler', 'Brown', 'skyler.brown@example.com', '555-3114', '21 Hillcrest Rd', NULL, 'Burnsville', 'MN', '55337', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(18, 'Logan', 'Nelson', 'logan.nelson@example.com', '555-3115', '74 Elmwood Ave', NULL, 'Lakeville', 'MN', '55044', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(19, 'Kendall', 'Moore', 'kendall.moore@example.com', '555-3116', '632 Oak St', NULL, 'Richfield', 'MN', '55423', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(20, 'Jesse', 'Perez', 'jesse.perez@example.com', '555-3117', '129 Willow Ln', NULL, 'Apple Valley', 'MN', '55124', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(21, 'Dakota', 'Clark', 'dakota.clark@example.com', '555-3118', '235 Linden Blvd', NULL, 'Plymouth', 'MN', '55446', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(22, 'Bailey', 'Johnson', 'bailey.johnson@example.com', '555-3119', '18 Birchwood Ct', NULL, 'Edina', 'MN', '55435', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(23, 'Reese', 'King', 'reese.king@example.com', '555-3120', '405 Walnut Dr', NULL, 'Maple Grove', 'MN', '55369', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(24, 'Aidan', 'Scott', 'aidan.scott@example.com', '555-3121', '9 Greenway Blvd', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(25, 'Harper', 'Adams', 'harper.adams@example.com', '555-3122', '53 Lake Rd', NULL, 'Oakdale', 'MN', '55128', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(26, 'Emerson', 'Brooks', 'emerson.brooks@example.com', '555-3123', '102 River St', NULL, 'Stillwater', 'MN', '55082', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(27, 'Finley', 'Wright', 'finley.wright@example.com', '555-3124', '840 Summit Ave', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(28, 'Charlie', 'Thompson', 'charlie.thompson@example.com', '555-3125', '11 Birch Dr', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(29, 'Micah', 'Allen', 'micah.allen@example.com', '555-3126', '17 Forest Ave', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(30, 'Jordan', 'Young', 'jordan.young@example.com', '555-3127', '555 Prairie Ln', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(31, 'River', 'Torres', 'river.torres@example.com', '555-3128', '212 Cedar Ct', NULL, 'Cottage Grove', 'MN', '55016', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(32, 'Dakota', 'Ward', 'dakota.ward@example.com', '555-3129', '99 Highland Ave', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(33, 'Elliot', 'Peterson', 'elliot.peterson@example.com', '555-3130', '78 Maple Ct', NULL, 'Lake Elmo', 'MN', '55042', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(34, 'Rowan', 'Mitchell', 'rowan.mitchell@example.com', '555-3131', '24 Brookside Ln', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(35, 'Sawyer', 'Cruz', 'sawyer.cruz@example.com', '555-3132', '60 Lincoln Ave', NULL, 'Minneapolis', 'MN', '55408', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(36, 'Parker', 'Evans', 'parker.evans@example.com', '555-3133', '200 5th St', NULL, 'Bloomington', 'MN', '55420', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(37, 'Reagan', 'Collins', 'reagan.collins@example.com', '555-3134', '73 Meadow Dr', NULL, 'Richfield', 'MN', '55423', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(38, 'Carter', 'Bell', 'carter.bell@example.com', '555-3135', '12 Oak Cir', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(39, 'Phoenix', 'Garcia', 'phoenix.garcia@example.com', '555-3136', '310 Sunrise Ct', NULL, 'Burnsville', 'MN', '55337', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(40, 'Sasha', 'Hughes', 'sasha.hughes@example.com', '555-3137', '420 Ridge Ln', NULL, 'Lakeville', 'MN', '55044', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(41, 'Avery', 'Turner', 'avery.turner@example.com', '555-3138', '29 Crest Dr', NULL, 'Apple Valley', 'MN', '55124', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(42, 'Dylan', 'Flores', 'dylan.flores@example.com', '555-3139', '15 Lakeview Ct', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(43, 'Hayden', 'Price', 'hayden.price@example.com', '555-3140', '88 Pine Blvd', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(44, 'Morgan', 'Bennett', 'morgan.bennett@example.com', '555-3141', '22 Birch Ln', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(45, 'Quinn', 'Howard', 'quinn.howard@example.com', '555-3142', '135 Summit Blvd', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(46, 'Taylor', 'Reed', 'taylor.reed@example.com', '555-3143', '59 Elmwood Ln', NULL, 'Minneapolis', 'MN', '55403', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(47, 'Jordan', 'Murphy', 'jordan.murphy@example.com', '555-3144', '48 Willow St', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(48, 'Riley', 'Bailey', 'riley.bailey@example.com', '555-3145', '25 Valley Rd', NULL, 'Maple Grove', 'MN', '55369', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(49, 'Cameron', 'Gray', 'cameron.gray@example.com', '555-3146', '70 Walnut Ave', NULL, 'Edina', 'MN', '55435', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(50, 'Dakota', 'Ross', 'dakota.ross@example.com', '555-3147', '41 Oakwood Ct', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(51, 'Avery', 'Watson', 'avery.watson@example.com', '555-3148', '87 Park Blvd', NULL, 'Lake Elmo', 'MN', '55042', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(52, 'Jamie', 'Parker', 'jamie.parker@example.com', '555-3149', '66 Hill St', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(53, 'Skyler', 'Cook', 'skyler.cook@example.com', '555-3150', '33 Elm Cir', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-10-16 20:42:04'),
-(54, 'John', 'Doe', 'john.doe@gmail.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(55, 'Jane', 'Doe', 'jane.doe@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(56, 'Bryan', 'Anderson', 'bryan.anderson@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-09-30 23:59:44');
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `email`, `phone`, `address_line1`, `address_line2`, `city`, `state_province`, `postal_code`, `created_at`, `updated_at`, `password_hash`) VALUES
+(1, 'Jamie', 'Ng', 'jamie.ng@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(2, 'Taylor', 'Kim', 'taylor.kim@example.com', '555-3002', NULL, NULL, 'Minneapolis', 'MN', '55401', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(3, 'Riley', 'Ortiz', 'riley.ortiz@example.com', '555-3003', NULL, NULL, 'Maplewood', 'MN', '55109', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(4, 'Avery', 'Johnson', 'avery.johnson@example.com', '555-3101', '124 Oak St', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(5, 'Jordan', 'Smith', 'jordan.smith@example.com', '555-3102', '451 Maple Ave', NULL, 'Minneapolis', 'MN', '55403', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(6, 'Cameron', 'Davis', 'cameron.davis@example.com', '555-3103', '67 Elm Rd', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(7, 'Taylor', 'Nguyen', 'taylor.nguyen@example.com', '555-3104', '98 Lakeview Dr', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(8, 'Morgan', 'Lopez', 'morgan.lopez@example.com', '555-3105', '220 Ridge Ln', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(9, 'Riley', 'Baker', 'riley.baker@example.com', '555-3106', '18 Pine Ct', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(10, 'Sydney', 'Martinez', 'sydney.martinez@example.com', '555-3107', '712 Birch Blvd', NULL, 'Bloomington', 'MN', '55420', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(11, 'Drew', 'Gonzalez', 'drew.gonzalez@example.com', '555-3108', '501 Highland Rd', NULL, 'Inver Grove Heights', 'MN', '55076', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(12, 'Payton', 'Lee', 'payton.lee@example.com', '555-3109', '330 Main St', NULL, 'Stillwater', 'MN', '55082', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(13, 'Jamie', 'Rivera', 'jamie.rivera@example.com', '555-3110', '27 Sunset Dr', NULL, 'Cottage Grove', 'MN', '55016', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(14, 'Alex', 'Foster', 'alex.foster@example.com', '555-3111', '8 Meadow Ln', NULL, 'Oakdale', 'MN', '55128', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(15, 'Quinn', 'Miller', 'quinn.miller@example.com', '555-3112', '46 Cedar St', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(16, 'Casey', 'Hernandez', 'casey.hernandez@example.com', '555-3113', '93 Walnut Ave', NULL, 'Mendota Heights', 'MN', '55120', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(17, 'Skyler', 'Brown', 'skyler.brown@example.com', '555-3114', '21 Hillcrest Rd', NULL, 'Burnsville', 'MN', '55337', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(18, 'Logan', 'Nelson', 'logan.nelson@example.com', '555-3115', '74 Elmwood Ave', NULL, 'Lakeville', 'MN', '55044', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(19, 'Kendall', 'Moore', 'kendall.moore@example.com', '555-3116', '632 Oak St', NULL, 'Richfield', 'MN', '55423', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(20, 'Jesse', 'Perez', 'jesse.perez@example.com', '555-3117', '129 Willow Ln', NULL, 'Apple Valley', 'MN', '55124', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(21, 'Dakota', 'Clark', 'dakota.clark@example.com', '555-3118', '235 Linden Blvd', NULL, 'Plymouth', 'MN', '55446', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(22, 'Bailey', 'Johnson', 'bailey.johnson@example.com', '555-3119', '18 Birchwood Ct', NULL, 'Edina', 'MN', '55435', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(23, 'Reese', 'King', 'reese.king@example.com', '555-3120', '405 Walnut Dr', NULL, 'Maple Grove', 'MN', '55369', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(24, 'Aidan', 'Scott', 'aidan.scott@example.com', '555-3121', '9 Greenway Blvd', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(25, 'Harper', 'Adams', 'harper.adams@example.com', '555-3122', '53 Lake Rd', NULL, 'Oakdale', 'MN', '55128', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(26, 'Emerson', 'Brooks', 'emerson.brooks@example.com', '555-3123', '102 River St', NULL, 'Stillwater', 'MN', '55082', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(27, 'Finley', 'Wright', 'finley.wright@example.com', '555-3124', '840 Summit Ave', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(28, 'Charlie', 'Thompson', 'charlie.thompson@example.com', '555-3125', '11 Birch Dr', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(29, 'Micah', 'Allen', 'micah.allen@example.com', '555-3126', '17 Forest Ave', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(30, 'Jordan', 'Young', 'jordan.young@example.com', '555-3127', '555 Prairie Ln', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(31, 'River', 'Torres', 'river.torres@example.com', '555-3128', '212 Cedar Ct', NULL, 'Cottage Grove', 'MN', '55016', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(32, 'Dakota', 'Ward', 'dakota.ward@example.com', '555-3129', '99 Highland Ave', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(33, 'Elliot', 'Peterson', 'elliot.peterson@example.com', '555-3130', '78 Maple Ct', NULL, 'Lake Elmo', 'MN', '55042', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(34, 'Rowan', 'Mitchell', 'rowan.mitchell@example.com', '555-3131', '24 Brookside Ln', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(35, 'Sawyer', 'Cruz', 'sawyer.cruz@example.com', '555-3132', '60 Lincoln Ave', NULL, 'Minneapolis', 'MN', '55408', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(36, 'Parker', 'Evans', 'parker.evans@example.com', '555-3133', '200 5th St', NULL, 'Bloomington', 'MN', '55420', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(37, 'Reagan', 'Collins', 'reagan.collins@example.com', '555-3134', '73 Meadow Dr', NULL, 'Richfield', 'MN', '55423', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(38, 'Carter', 'Bell', 'carter.bell@example.com', '555-3135', '12 Oak Cir', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(39, 'Phoenix', 'Garcia', 'phoenix.garcia@example.com', '555-3136', '310 Sunrise Ct', NULL, 'Burnsville', 'MN', '55337', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(40, 'Sasha', 'Hughes', 'sasha.hughes@example.com', '555-3137', '420 Ridge Ln', NULL, 'Lakeville', 'MN', '55044', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(41, 'Avery', 'Turner', 'avery.turner@example.com', '555-3138', '29 Crest Dr', NULL, 'Apple Valley', 'MN', '55124', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(42, 'Dylan', 'Flores', 'dylan.flores@example.com', '555-3139', '15 Lakeview Ct', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(43, 'Hayden', 'Price', 'hayden.price@example.com', '555-3140', '88 Pine Blvd', NULL, 'Maplewood', 'MN', '55109', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(44, 'Morgan', 'Bennett', 'morgan.bennett@example.com', '555-3141', '22 Birch Ln', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(45, 'Quinn', 'Howard', 'quinn.howard@example.com', '555-3142', '135 Summit Blvd', NULL, 'St Paul', 'MN', '55105', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(46, 'Taylor', 'Reed', 'taylor.reed@example.com', '555-3143', '59 Elmwood Ln', NULL, 'Minneapolis', 'MN', '55403', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(47, 'Jordan', 'Murphy', 'jordan.murphy@example.com', '555-3144', '48 Willow St', NULL, 'Roseville', 'MN', '55113', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(48, 'Riley', 'Bailey', 'riley.bailey@example.com', '555-3145', '25 Valley Rd', NULL, 'Maple Grove', 'MN', '55369', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(49, 'Cameron', 'Gray', 'cameron.gray@example.com', '555-3146', '70 Walnut Ave', NULL, 'Edina', 'MN', '55435', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(50, 'Dakota', 'Ross', 'dakota.ross@example.com', '555-3147', '41 Oakwood Ct', NULL, 'Eagan', 'MN', '55122', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(51, 'Avery', 'Watson', 'avery.watson@example.com', '555-3148', '87 Park Blvd', NULL, 'Lake Elmo', 'MN', '55042', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(52, 'Jamie', 'Parker', 'jamie.parker@example.com', '555-3149', '66 Hill St', NULL, 'Hudson', 'WI', '54016', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(53, 'Skyler', 'Cook', 'skyler.cook@example.com', '555-3150', '33 Elm Cir', NULL, 'Woodbury', 'MN', '55125', '2025-10-16 20:42:04', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(54, 'John', 'Doe', 'john.doe@gmail.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(55, 'Jane', 'Doe', 'jane.doe@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(56, 'Bryan', 'Anderson', 'bryan.anderson@example.com', '555-3001', NULL, NULL, 'St Paul', 'MN', '55105', '2025-09-30 23:59:44', '2025-12-09 20:05:31', '$2y$10$f4q5VSo8VaLvGEv9plcuV.32HLq5ldQIpM5vKw7yslesVHUnQosM.'),
+(58, 'John', 'Doe', 'j.doe@test.com', '651-555-1234', '', '', '', '', '', '2025-12-09 21:02:07', '2025-12-09 21:02:07', '$2y$10$SHOy021M7HApgNePoHcAkuAOBCSsXo6dDlEwuuV9C2poK76p9hrrC');
 
 -- --------------------------------------------------------
 
@@ -170,11 +172,10 @@ INSERT INTO `reservations` (`reservation_id`, `vehicle_id`, `customer_id`, `crea
 (20251022, 75, 11, 17, 'hold', '2025-09-30 11:00:00', '2025-09-23 10:45:00', 'confirmed', 'Customer will be in around lunchtime', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
 (20251023, 43, 32, 17, 'test_drive', '2025-09-30 17:30:00', '2025-09-23 18:00:00', 'confirmed', 'Customer will be in around dinner', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
 (20251024, 45, 35, 17, 'hold', '2025-10-16 09:30:00', '2025-10-16 10:45:00', 'completed', '', '2025-09-30 23:59:44', '2025-10-17 01:25:42'),
-(20251025, 58, 55, 21, 'hold', '2025-10-01 17:30:00', '2025-10-01 18:00:00', 'confirmed', 'Customer will be in around dinner', '2025-09-30 23:59:44', '2025-09-30 23:59:44'),
-(20251026, 37, 56, 1, 'test_drive', '2025-11-07 10:30:00', '2025-11-07 11:15:00', 'pending', NULL, '2025-11-06 15:42:10', '2025-11-06 15:42:10'),
 (20251027, 61, 25, 22, 'test_drive', '2025-11-08 09:42:00', '2025-11-08 10:27:00', 'pending', 'This is a test', '2025-11-06 15:42:54', '2025-11-06 15:42:54'),
 (20251028, 61, 29, 22, 'test_drive', '2025-11-06 10:29:00', '2025-11-06 11:14:00', 'confirmed', 'test 3', '2025-11-06 16:29:21', '2025-11-07 00:22:12'),
-(20251029, 32, 44, 15, 'test_drive', '2025-11-06 19:16:00', '2025-11-06 20:01:00', 'pending', 'Customer for test drive', '2025-11-07 01:17:15', '2025-11-07 01:17:15');
+(20251029, 32, 44, 15, 'test_drive', '2025-11-06 19:16:00', '2025-11-06 20:01:00', 'completed', 'Customer for test drive', '2025-11-07 01:17:15', '2025-11-13 00:56:20'),
+(20251031, 49, 58, 3, 'test_drive', '2025-12-11 13:23:00', '2025-12-11 14:08:00', 'pending', 'Customer wants to buy', '2025-12-11 19:23:07', '2025-12-11 19:23:07');
 
 --
 -- Triggers `reservations`
@@ -229,7 +230,9 @@ INSERT INTO `sales` (`sale_id`, `vehicle_id`, `customer_id`, `employee_id`, `sal
 (1, 3, 31, 17, 23250.00, '2025-07-12', 'cash', 'Approved at 2.9% APR, 72 month', '2025-09-30 23:59:44', '2025-10-17 01:23:31'),
 (2, 10, 23, 17, 14000.00, '2025-09-18', 'finance', 'Approved at 4.9% APR', '2025-09-30 23:59:44', '2025-10-17 01:28:42'),
 (3, 62, 25, 22, 50000.00, '2025-11-05', 'finance', NULL, '2025-11-06 02:12:50', '2025-11-06 02:12:50'),
-(6, 51, 38, 22, 34990.00, '2025-11-06', 'finance', 'test sale', '2025-11-07 01:16:05', '2025-11-07 01:16:05');
+(6, 51, 38, 22, 34990.00, '2025-11-06', 'finance', 'test sale', '2025-11-07 01:16:05', '2025-11-07 01:16:05'),
+(7, 42, 2, 20, 25990.00, '2025-11-12', 'cash', 'Big spender paying cash for test sale.', '2025-11-12 16:49:45', '2025-11-12 16:49:45'),
+(9, 61, 1, 1, 34990.00, '2025-12-04', 'lease', 'Lease 36 months.', '2025-12-05 01:52:45', '2025-12-05 01:52:45');
 
 --
 -- Triggers `sales`
@@ -317,7 +320,7 @@ INSERT INTO `vehicles` (`vehicle_id`, `vin`, `make`, `model`, `trim`, `model_yea
 (39, '3VV2B7AX1MM000135', 'Volkswagen', 'Tiguan', 'SEL', '2021', 'Pure White', 'SUV', 'Automatic', 'Gasoline', 25100, 25950.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot B', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (40, 'JM3KFBCM5M1000136', 'Mazda', 'CX-5', 'Touring', '2021', 'Machine Gray', 'SUV', 'Automatic', 'Gasoline', 23700, 24990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot B', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (41, 'JM1BPBMM5N1000137', 'Mazda', 'Mazda3', 'Premium', '2022', 'Soul Red', 'Hatchback', 'Automatic', 'Gasoline', 16800, 22990.00, 'https://source.unsplash.com/600x400/?hatchback,car', 'available', 'hatchback.jpg', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(42, 'JF2GTHNC3MH000138', 'Subaru', 'Crosstrek', 'Limited', '2021', 'Cool Gray Khaki', 'SUV', 'CVT', 'Gasoline', 22400, 25990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
+(42, 'JF2GTHNC3MH000138', 'Subaru', 'Crosstrek', 'Limited', '2021', 'Cool Gray Khaki', 'SUV', 'CVT', 'Gasoline', 22400, 25990.00, 'https://source.unsplash.com/600x400/?suv,car', 'sold', 'SUV.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-11-12 16:49:45'),
 (43, 'JF2SKAJC6LH000139', 'Subaru', 'Forester', 'Premium', '2020', 'Jasper Green', 'SUV', 'CVT', 'Gasoline', 33100, 21990.00, 'https://source.unsplash.com/600x400/?suv,car', 'reserved', 'SUV.png', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-10-17 01:19:06'),
 (44, 'YV4L12RL5P1000140', 'Volvo', 'XC60', 'B5 Plus', '2023', 'Denim Blue', 'SUV', 'Automatic', 'Hybrid', 9300, 45990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (45, 'JTHGZ1B26L5000141', 'Lexus', 'RC 300', 'F Sport', '2020', 'Ultra White', 'Coupe', 'Automatic', 'Gasoline', 18800, 35990.00, 'https://source.unsplash.com/600x400/?coupe,car', 'available', 'coupe.png', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
@@ -336,24 +339,23 @@ INSERT INTO `vehicles` (`vehicle_id`, `vin`, `make`, `model`, `trim`, `model_yea
 (58, 'ZASPAKBN0P7000154', 'Alfa Romeo', 'Stelvio', 'Sprint', '2023', 'Alfa White', 'SUV', 'Automatic', 'Gasoline', 7200, 38990.00, 'https://source.unsplash.com/600x400/?suv,car', 'reserved', 'SUV.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-10-17 01:26:36'),
 (59, '3VVFB7AX3RM000155', 'Volkswagen', 'Tiguan', 'SE R-Line', '2024', 'Kings Red', 'SUV', 'Automatic', 'Gasoline', 5400, 29990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (60, 'JTEAAAAH0RA000156', 'Toyota', 'Grand Highlander', 'XLE', '2024', 'Blueprint', 'SUV', 'Automatic', 'Hybrid', 4100, 44990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(61, '1N6ED1EK8RN000157', 'Nissan', 'Frontier', 'SV', '2024', 'Gun Metallic', 'Truck', 'Automatic', 'Gasoline', 3900, 34990.00, 'https://source.unsplash.com/600x400/?pickup,truck', 'available', 'truck.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
+(61, '1N6ED1EK8RN000157', 'Nissan', 'Frontier', 'SV', '2024', 'Gun Metallic', 'Truck', 'Automatic', 'Gasoline', 3900, 34990.00, 'https://source.unsplash.com/600x400/?pickup,truck', 'sold', '1763687409_0964feb960f3.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-12-05 01:52:45'),
 (62, '5XYK5CDF5RG000158', 'Kia', 'EV9', 'Wind', '2024', 'Snow White', 'SUV', 'Automatic', 'Electric', 2200, 56990.00, 'https://source.unsplash.com/600x400/?suv,car', 'sold', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-11-06 02:12:50'),
 (63, 'YS3FD59Y781000159', 'Saab', '9-3', '2.0T', '2008', 'Nocturne Blue', 'Sedan', 'Manual', 'Gasoline', 128500, 5990.00, 'https://source.unsplash.com/600x400/?sedan,car', 'available', 'sedan.png', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (64, 'JHMGE8H55BC000160', 'Honda', 'Fit', 'Sport', '2011', 'Orange', 'Hatchback', 'Automatic', 'Gasoline', 102300, 6990.00, 'https://source.unsplash.com/600x400/?hatchback,car', 'available', 'hatchback.jpg', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (65, '1G1BE5SM1H7000161', 'Chevrolet', 'Cruze', 'LT', '2017', 'Silver Ice', 'Sedan', 'Automatic', 'Gasoline', 78600, 9990.00, 'https://source.unsplash.com/600x400/?sedan,car', 'available', 'sedan.png', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(66, 'WDDWJ4KB6LF000162', 'Mercedes-Benz', 'C 300', 'Coupe', '2020', 'Mojave Silver', 'Coupe', 'Automatic', 'Gasoline', 29800, 31990.00, 'https://source.unsplash.com/600x400/?coupe,car', 'available', 'coupe.png', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
+(66, 'WDDWJ4KB6LF000162', 'Mercedes-Benz', 'C 300', 'Coupe', '2020', 'Mojave Silver', 'Coupe', 'Automatic', 'Gasoline', 29800, 31990.00, 'https://source.unsplash.com/600x400/?coupe,car', 'available', 'coupe.png', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-11-14 02:46:43'),
 (67, '3KPF24AD8ME000163', 'Kia', 'Forte', 'LXS', '2021', 'Gravity Gray', 'Sedan', 'Automatic', 'Gasoline', 26100, 16990.00, 'https://source.unsplash.com/600x400/?sedan,car', 'available', 'sedan.png', 'Main Lot A', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (68, '5NMS5DAJ1RH000164', 'Hyundai', 'Santa Fe', 'Calligraphy', '2024', 'Hampton Gray', 'SUV', 'Automatic', 'Gasoline', 3500, 41990.00, 'https://source.unsplash.com/600x400/?suv,car', 'reserved', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (69, 'JTMGBRFV2RD000165', 'Toyota', 'RAV4 Prime', 'XSE', '2024', 'Supersonic Red', 'SUV', 'Automatic', 'Plug-in Hybrid', 2100, 51990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (70, 'YV1H12DK1R2000166', 'Volvo', 'V60', 'Plus', '2024', 'Crystal White', 'Wagon', 'Automatic', 'Plug-in Hybrid', 2600, 52990.00, 'https://source.unsplash.com/600x400/?station-wagon,car', 'available', 'wagon.jpeg', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (71, '3GCPADED1NG000167', 'Chevrolet', 'Silverado 1500', 'Custom', '2022', 'Summit White', 'Truck', 'Automatic', 'Gasoline', 24100, 35990.00, 'https://source.unsplash.com/600x400/?pickup,truck', 'available', 'truck.png', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(72, '1FAHP2F88HG000168', 'Ford', 'Taurus', 'SEL', '2017', 'White Gold', 'Sedan', 'Automatic', 'Gasoline', 88400, 11990.00, 'https://source.unsplash.com/600x400/?sedan,car', 'available', 'sedan.png', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
+(72, '1FAHP2F88HG000168', 'Ford', 'Taurus', 'SEL', '2017', 'White Gold', 'Sedan', 'Automatic', 'Gasoline', 88400, 11990.00, 'https://source.unsplash.com/600x400/?sedan,car', 'available', '1762965501_89769107f616.webp', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-11-12 16:38:21'),
 (73, 'JTDKARFP1J3000169', 'Toyota', 'Prius Prime', 'Plus', '2018', 'Magnetic Gray', 'Hatchback', 'Automatic', 'Plug-in Hybrid', 61200, 16990.00, 'https://source.unsplash.com/600x400/?hatchback,car', 'available', 'hatchback.jpg', 'Main Lot C', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (74, 'WVGZZZ5NZJM000170', 'Volkswagen', 'Atlas', 'SEL', '2018', 'Deep Black', 'SUV', 'Automatic', 'Gasoline', 72300, 21990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot B', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
 (75, 'ZFF79ALA2E0200171', 'Ferrari', 'California T', NULL, '2014', 'Rosso Corsa', 'Convertible', 'Automatic', 'Gasoline', 17800, 129990.00, 'https://source.unsplash.com/600x400/?convertible,car', 'reserved', 'convertible.jpeg', 'Showroom', '2025-10-15', '2025-10-16 04:17:20', '2025-10-17 01:12:57'),
 (76, 'SALLAAAN8GA000172', 'Land Rover', 'Range Rover', 'HSE', '2016', 'Santorini Black', 'SUV', 'Automatic', 'Diesel', 64200, 44990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Overflow Lot', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(77, '1GYS3CKJ2KR000173', 'Cadillac', 'Escalade', 'Luxury', '2019', 'Black Raven', 'SUV', 'Automatic', 'Gasoline', 48500, 52990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot B', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34'),
-(80, 'ZARFANBN5N7000174', 'Alfa Romeo', 'Giulia', NULL, '2020', 'White', NULL, NULL, NULL, 0, 89000.00, NULL, 'reserved', '1762478305_6103464c934c.jpg', NULL, '2025-11-06', '2025-11-07 01:18:25', '2025-11-07 01:18:25');
+(77, '1GYS3CKJ2KR000173', 'Cadillac', 'Escalade', 'Luxury', '2019', 'Black Raven', 'SUV', 'Automatic', 'Gasoline', 48500, 52990.00, 'https://source.unsplash.com/600x400/?suv,car', 'available', 'SUV.png', 'Main Lot B', '2025-10-15', '2025-10-16 04:17:20', '2025-10-16 20:07:34');
 
 --
 -- Indexes for dumped tables
@@ -410,7 +412,7 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `employees`
@@ -422,13 +424,13 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20251030;
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20251032;
 
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `sale_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `sale_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `vehicles`

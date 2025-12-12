@@ -18,6 +18,7 @@ require_once __DIR__ . '/../lib/db.php';
 if (!auth_check()) redirect('../login.php');
 
 $u   = auth_user();
+$is_admin = isset($u['role']) && $u['role'] === 'admin';
 $pdo = DB::conn();
 
 /* ---- Safe stats (guards if a table/column is missing) ---- */
@@ -51,7 +52,8 @@ $today = date('Y-m-d');
 $month_start = date('Y-m-01');
 
 $res_upcoming  = oneVal($pdo, "SELECT COUNT(*) FROM reservations WHERE start_datetime >= ?", [$today . ' 00:00:00']);
-$res_today     = oneVal($pdo, "SELECT COUNT(*) FROM reservations WHERE DATE(start_datetime)=?", [$today]);
+// Use DB-side date window to avoid PHP/DB timezone drift
+$res_today     = oneVal($pdo, "SELECT COUNT(*) FROM reservations WHERE start_datetime >= CURDATE() AND start_datetime < DATE_ADD(CURDATE(), INTERVAL 1 DAY)");
 
 $sales_month   = oneVal($pdo, "SELECT COUNT(*) FROM sales WHERE sale_date >= ?", [$month_start]);
 $revenue_month = oneMoney($pdo, "SELECT SUM(sale_price) FROM sales WHERE sale_date >= ?", [$month_start]);
@@ -145,7 +147,9 @@ try {
         <div class="content">
 
             <div class="header">
-                <div class="title">Welcome, <?= e($u['name'] ?? 'User') ?></div>
+                <div class="title">Welcome, <?= e($u['name'] ?? 'User') ?>
+                    <span class="role-chip"><?= e(ucfirst($u['role'] ?? 'User')) ?></span>
+                </div>
                 <div class="right" style="display:flex;align-items:center;gap:10px;">
                     <div class="theme-menu-wrapper" style="position:relative;">
                         <button id="theme-gear" aria-haspopup="true" aria-expanded="false" title="Theme settings" style="background:transparent;border:1px solid var(--border);padding:6px;border-radius:8px;cursor:pointer;color:var(--text)">
@@ -181,13 +185,13 @@ try {
                 </div>
 
                 <div class="card">
-                    <div class="kpi">
+                    <a class="kpi" href="reservations.php" style="text-decoration:none;color:inherit;">
                         <div class="num"><?= number_format($res_today) ?></div>
                         <div>
                             <div class="label">Reservations today</div>
                             <div><small>Upcoming: <?= (int)$res_upcoming ?></small></div>
                         </div>
-                    </div>
+                    </a>
                     <!-- mini sparkline (last 12 weeks) -->
                     <svg viewBox="0 0 120 46" class="spark" aria-hidden="true">
                         <?php
@@ -252,6 +256,10 @@ try {
                         <a class="btn btn-primary" href="<?= BASE_URL ?>/add_reservation.php">Add Reservation</a>
                         <a class="btn" href="customers.php">Find Customer</a>
                         <a class="btn btn-primary" href="<?= BASE_URL ?>/new_sale.php">New Sale</a>
+                        <?php if ($is_admin): ?>
+                            <a class="btn" href="<?= BASE_URL ?>/employees.php">Employees</a>
+                            <a class="btn" href="<?= BASE_URL ?>/reports_activity.php">Reports / Activity</a>
+                        <?php endif; ?>
                     </div>
                     <div class="note mt-10">
                     </div>

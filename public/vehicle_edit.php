@@ -9,7 +9,7 @@ $id = (int)($_GET['id'] ?? 0);
 
 // current user and role check
 $u = auth_user();
-$is_manager_or_admin = isset($u['role']) && in_array($u['role'], ['admin', 'manager'], true);
+$is_admin = isset($u['role']) && $u['role'] === 'admin';
 
 $st = $pdo->prepare('SELECT * FROM vehicles WHERE vehicle_id=? LIMIT 1');
 $st->execute([$id]);
@@ -22,9 +22,9 @@ if (!$veh) {
 $msg = '';
 // Handle POST: update then redirect back to vehicles list
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // If delete action requested, remove the vehicle record (only admin/manager)
+    // If delete action requested, remove the vehicle record (admins only)
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-        if (!$is_manager_or_admin) {
+        if (!$is_admin) {
             $msg = 'You do not have permission to delete vehicles.';
         } else {
             try {
@@ -196,13 +196,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button>Save</button>
                         <a class="btn secondary" href="<?= BASE_URL ?>/vehicles.php">Cancel</a>
                         <!-- Delete button (will submit the separate hidden form below) -->
-                        <?php if ($is_manager_or_admin): ?>
+                        <?php if ($is_admin): ?>
                             <button type="button" class="btn secondary" id="deleteBtn" style="margin-left:8px;">Delete</button>
                         <?php endif; ?>
                     </div>
                 </form>
                 <!-- hidden delete form must be outside the main form to avoid nested forms -->
-                <?php if ($is_manager_or_admin): ?>
+                <?php if ($is_admin): ?>
                     <form id="deleteForm" method="post" style="display:none;">
                         <input type="hidden" name="action" value="delete">
                     </form>
@@ -215,9 +215,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var del = document.getElementById('deleteBtn');
             if (!del) return;
             del.addEventListener('click', function(e){
-                if (confirm('Delete this vehicle? This action is permanent and cannot be undone. Are you sure?')) {
-                    document.getElementById('deleteForm').submit();
-                }
+                var first = confirm('Delete this vehicle from inventory? This cannot be undone.');
+                if (!first) return;
+                var pwd = prompt('To confirm, enter your password:');
+                if (pwd === null || pwd === '') return;
+                var form = document.getElementById('deleteForm');
+                if (!form) return;
+                var inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'confirm_password';
+                inp.value = pwd;
+                form.appendChild(inp);
+                form.submit();
             });
         })();
     </script>

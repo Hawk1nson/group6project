@@ -21,6 +21,7 @@ if ($cust_session && isset($cust_session['id'])) {
 }
 
 $vehicle_id = isset($_GET['vehicle']) ? (int)$_GET['vehicle'] : null;
+$is_embed = isset($_GET['embed']) || isset($_POST['embed']);
 $tag = sanitize($_GET['tag'] ?? ($_POST['tag'] ?? ''));
 
 // Load vehicles for dropdown (exclude sold)
@@ -159,6 +160,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('contact_msg', 'Your message was saved to a temporary log file; please ask the dealership to fix storage/logs permissions.', 'alert alert-warning');
         }
 
+        if ($is_embed) {
+            // Minimal response for iframe embed: notify parent and stop navigation
+            $tagSafe = $tag ? htmlspecialchars($tag, ENT_QUOTES, 'UTF-8') : '';
+            ?><!doctype html><html><body><script>parent.postMessage({type:'contact_sent', tag:'<?= $tagSafe ?>'}, '*');</script></body></html><?php
+            exit;
+        }
+
         // Redirect to avoid form resubmission
         redirect('contact_us.php');
     }
@@ -199,6 +207,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method="post" novalidate>
                                     <?php $default_message = ($tag === 'Reservation' && $prefill_vehicle && empty($_POST['message'])) ? 'Reservation request for ' . trim(($prefill_vehicle['model_year'] ?? '') . ' ' . ($prefill_vehicle['make'] ?? '') . ' ' . ($prefill_vehicle['model'] ?? '')) . ' (VIN: ' . ($prefill_vehicle['vin'] ?? '') . '). Please contact me to confirm availability and schedule dates.' : ($_POST['message'] ?? ''); ?>
                                     <input type="hidden" name="tag" value="<?= e($tag) ?>">
+                                    <?php if ($is_embed): ?>
+                                        <input type="hidden" name="embed" value="1">
+                                    <?php endif; ?>
                             <div class="form-row">
                                 <?php
                                     $prefill_name  = $cust_prefill ? trim(($cust_prefill['first_name'] ?? '') . ' ' . ($cust_prefill['last_name'] ?? '')) : '';

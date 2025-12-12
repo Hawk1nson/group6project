@@ -86,3 +86,25 @@ __________
 
 ### UI polish
 - Minor dashboard refinements and quick links; profile page styling for message history.
+
+## PART 2
+
+### Messaging enhancements
+- Added "Create Reservation" button on message.php detail view for messages tagged "Reservation"; prefills customer email and vehicle ID in add_reservation.php when available.
+- Message details now show vehicle-specific action buttons (View/Edit) when vehicle data is present.
+
+### Vehicle browsing (public shop)
+- Added top/bottom pagination controls to index.php for browsing vehicle inventory; default page size is 15.
+- Added per-page dropdown selector (15, 30, 45, 60, All) positioned at top-left above vehicle grid.
+- Per-page selection now persists in browser localStorage, so customer's choice is remembered on return visits.
+- Pagination hides when all results fit on one page.
+
+### Reservation form improvements
+- Enlarged notes textarea in add_reservation.php (rows 6, min-height 140px, 100% width) for better usability.
+
+### Dashboard fixes and enhancements
+- Fixed "Reservations Today" widget to use database-side date window (CURDATE()) instead of PHP date string, eliminating timezone-related count mismatches.
+- Made "Reservations Today" KPI clickable, linking to reservations.php for quick access.
+
+### Quality of life
+- Search term and pagination now work together seamlessly on index.php; filtering first, then paginating through results.

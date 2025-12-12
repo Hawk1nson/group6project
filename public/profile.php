@@ -120,6 +120,16 @@ try {
 // Limit to latest 30 messages for display
 $messages = array_slice($messages, 0, 30);
 
+// Fetch vehicles purchased by this customer
+$purchases = [];
+try {
+	$st = $pdo->prepare('SELECT s.sale_id, s.sale_date, s.sale_price, v.vehicle_id, v.model_year, v.make, v.model, v.vin FROM sales s LEFT JOIN vehicles v ON v.vehicle_id = s.vehicle_id WHERE s.customer_id = ? ORDER BY s.sale_date DESC');
+	$st->execute([(int)$cust['id']]);
+	$purchases = $st->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+	$purchases = [];
+}
+
 ?>
 <!doctype html>
 <html>
@@ -128,28 +138,13 @@ $messages = array_slice($messages, 0, 30);
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Your Profile — CDMS</title>
 	<?php include __DIR__ . '/../includes/header.php'; ?>
-	<style>
-		.profile-shell { max-width: 1040px; margin: 0 auto; }
-		.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-		.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: 0 8px 22px rgba(0,0,0,0.06); }
-		.card h2 { margin-top: 0; }
-		.field-row { margin-bottom: 8px; }
-		.field-label { font-weight: 600; color: var(--muted); display: inline-block; min-width: 120px; }
-		.msg-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-		.msg-item { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--bg); }
-		.msg-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); }
-		.pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-		.pill.ok { background: #10b981; color: #fff; }
-		.pill.warn { background: #f59e0b; color: #fff; }
-		.pill.muted { background: #6b7280; color: #fff; }
-		.msg-body { margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
-	</style>
 </head>
-<body>
-	<div class="layout">
-		<?php include __DIR__ . '/_sidebar_shop.php'; ?>
-		<div class="content shop-content">
-			<div class="profile-shell">
+<body class="page-profile">
+	<div class="site-wrap">
+		<div class="layout">
+			<?php include __DIR__ . '/_sidebar_shop.php'; ?>
+			<div class="content shop-content">
+					<div class="profile-shell">
 				<h1>Your Profile</h1>
 				<?php flash('contact_msg'); ?>
 				<p class="note">Manage your info and review the messages you've sent us.</p>
@@ -178,6 +173,38 @@ $messages = array_slice($messages, 0, 30);
 							<a class="btn secondary" href="public_login.php?logout_customer=1">Logout</a>
 						</div>
 					</div>
+				</div>
+
+				<div class="card mt-12">
+					<div class="flex-between mb-8">
+						<h2 style="margin:0;">Vehicles Purchased</h2>
+					</div>
+					<?php if (!$purchases): ?>
+						<p class="note">You have not purchased any vehicles yet.</p>
+					<?php else: ?>
+						<ul class="msg-list">
+							<?php foreach ($purchases as $p):
+								$veh = trim(($p['model_year'] ?? '') . ' ' . ($p['make'] ?? '') . ' ' . ($p['model'] ?? ''));
+								$saleDate = $p['sale_date'] ? date('M j, Y', strtotime($p['sale_date'])) : '—';
+								$price = $p['sale_price'] !== null ? '$' . number_format((float)$p['sale_price'], 2) : '$0.00';
+								$vid = $p['vehicle_id'] ?? null;
+							?>
+							<li class="msg-item">
+								<div class="msg-meta">
+									<span><?= e($veh ?: 'Vehicle') ?></span>
+									<span>• <?= e($saleDate) ?></span>
+									<span>• <?= e($price) ?></span>
+								</div>
+								<div class="msg-body">VIN: <?= e($p['vin'] ?? '') ?></div>
+								<?php if ($vid): ?>
+									<div class="mt-8">
+										<a class="btn" href="<?= BASE_URL ?>/vehicle_view.php?id=<?= (int)$vid ?>">View vehicle</a>
+									</div>
+								<?php endif; ?>
+							</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
 				</div>
 
 				<div class="card mt-12">

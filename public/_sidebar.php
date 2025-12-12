@@ -35,17 +35,21 @@ function is_active(string $needle, string $uri): string
 
         <div class="muted">Operations</div>
 
+        <a href="<?= BASE_URL ?>/sales.php"
+            class="<?= is_active('/sales.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Sales</a>
+
         <a href="<?= $base ?>/reservations.php"
             class="<?= is_active('/reservations.php', $uri) ?>">Reservations</a>
 
         <a href="<?= BASE_URL ?>/customers.php"
             class="<?= is_active('/customers.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Customers</a>
 
-        <a href="<?= BASE_URL ?>/sales.php"
-            class="<?= is_active('/sales.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Sales</a>
-
         <a href="<?= BASE_URL ?>/employees.php"
             class="<?= is_active('/employees.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Employees</a>
+        <?php if (isset($u['role']) && $u['role'] === 'admin'): ?>
+        <a href="<?= BASE_URL ?>/reports_activity.php"
+            class="<?= is_active('/reports_activity.php', $_SERVER['REQUEST_URI'] ?? '') ?>">Reports &amp; Logs</a>
+        <?php endif; ?>
 
         <div class="muted">Communication</div>
 

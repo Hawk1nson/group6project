@@ -8,6 +8,7 @@ require_once __DIR__ . '/bootstrap.php';
 $pdo = DB::conn();
 
 $preselectVehicleId = isset($_GET['vehicle_id']) ? (int)$_GET['vehicle_id'] : null;
+$preselectCustomerId = isset($_GET['reserved_customer_id']) ? (int)$_GET['reserved_customer_id'] : null;
 $errors = [];
 
 // Handle submit
@@ -183,7 +184,7 @@ $vehicles = $pdo->query(
                                     <select name="customer_id" id="customer_id" required>
                                         <option value="">-- Select --</option>
                                         <?php foreach ($customers as $c): ?>
-                                            <option value="<?= (int)$c['customer_id'] ?>"><?= htmlspecialchars($c['last_name'] . ', ' . $c['first_name']) ?></option>
+                                            <option value="<?= (int)$c['customer_id'] ?>" <?= $preselectCustomerId === (int)$c['customer_id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['last_name'] . ', ' . $c['first_name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
